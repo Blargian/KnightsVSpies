@@ -1,0 +1,23 @@
+{
+  "name": "spyspy",
+  "version": "1.0.0",
+  "description": "A turnbased spy-spy multiplayer game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blargian/spyspy.git"
+  },
+  "keywords": [
+    "multiplayer",
+    "spyspy"
+  ],
+  "author": "Shaun Struwig",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Blargian/spyspy/issues"
+  },
+  "homepage": "https://github.com/Blargian/spyspy#readme"
+}
