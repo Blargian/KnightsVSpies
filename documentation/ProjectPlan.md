@@ -26,3 +26,4 @@ A turn based multiplayer spy-spy game. The game allows several players to naviga
 - Typescript everywhere
 - Eventually React Native 
 - Test driven development with Jest 
+- Using Tailwind css or material UI
