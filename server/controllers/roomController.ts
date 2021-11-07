@@ -1,11 +1,20 @@
-import * as randomstring from "randomstring";
+import {Room} from '../models/roomModel';
+import {Socket} from 'socket.io';
 
 export class RoomController {
 
-    public generateRoomCode() : string {
-        return randomstring.generate({
-            length: 6,
-            charset: 'alphanumeric'
-        });
+    private rooms: Array<Room> = [];
+
+    constructor(){
+
+    }
+
+    public addRoom(callingSocket:Socket){
+        const newRoom = new Room(callingSocket);
+        this.rooms.push()
+    }
+
+    public getRoomCount() : number {
+        return this.rooms.length;
     }
 }

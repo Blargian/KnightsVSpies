@@ -1,8 +1,7 @@
 import React from 'react';
-import { Socket } from 'socket.io-client';
 
 interface HomepageProps {
-    userSocket: Socket
+    userSocket:any
 }
 
 const Homepage: React.FC<HomepageProps> = ({userSocket}: HomepageProps) => {

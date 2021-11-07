@@ -6,6 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import App from '../client/components/app';
 import socketServer from "./socket";
 import {createServer} from 'http';
+import { MainController } from './controllers/mainController';
 
 const expressServer = express();
 
@@ -27,12 +28,16 @@ expressServer.get('/',(req,res)=>{
 const httpServer = createServer(expressServer);
 
 const io = socketServer(httpServer);
+const controller = new MainController();
+
 io.on("connection", (socket)=>{
     console.log(`New socket connected ${socket.id}`);
 
-    socket.on("create_room",(anObject)=>{
-        console.log('generate a random code');
-    })
+    socket.on("create_room",()=>{
+        controller.roomController.addRoom(socket);    
+        const numberOfRooms = controller.roomController.getRoomCount(); 
+        console.log(`Number of rooms currently created is: ${numberOfRooms}`);    
+    });
 });
 
 httpServer.listen(3000, ()=> {

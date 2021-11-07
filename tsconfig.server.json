@@ -1,6 +1,6 @@
 {
     "extends": "./tsconfig",  
-    "include": ["server"],
+    "include": ["server","decs.d.ts"],
     "compilerOptions": {
         "module":"commonjs",
         "skipLibCheck": true,
