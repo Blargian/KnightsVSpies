@@ -8,3 +8,17 @@ This [article](https://nils-mehlhorn.de/posts/typescript-nodejs-react-ssr) artic
 
 Next I want to get Jest setup so that I can write unit tests. I'll try the guide for getting setup with webpack [here](https://jestjs.io/docs/webpack)
 
+## Room creation and joining
+
+I've been reading a few articles and watching a lot of videos but structuring the application is a bit of a grey area for me still. There is a lot of content about simple chat applications but not much on how to structure a turn based multiplayer game. At this point grey areas for me specifically are:
+- how to structure the code (I think MVC is a good choice but how does socket work in this context?)
+- how does routing take place. Does the frontend do that or does the backend do that? After all this is a single page application. My guess is that the front end does that maybe.
+
+I'll start with something basic and just go along with it. If my approach is not optimal I will learn something from it so that is okay. My goal now: 
+
+- click create room
+- this sends an event to the server. Server generates a roomcode and stores it in some datastore serverside and then sends this code back to the frontend telling it to redirect the app to route /room=XXXXX.
+- A socket room will have to be created corresponding to the room code.
+- on the homepage entering the code sends this code to the server which checks if it is one of the roomcodes which exists currently and if it is it routes the player to the same route /room=XXXXX
+- 
+

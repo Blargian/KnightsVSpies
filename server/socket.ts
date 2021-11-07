@@ -1,17 +1,13 @@
 import { Server } from 'socket.io';
-import {useSocketServer} from "socket-controllers";
 import path from 'path';
 
 export default (httpServer: any) => {
 
+    console.log('Setting up socket.io server...');
     const io = new Server(httpServer,{
         cors: {
             origin: "*"
         },
-    });
-
-    useSocketServer(io,{
-        controllers:[path.join(__dirname, "./controllers/*.ts")]
     });
 
     return io;

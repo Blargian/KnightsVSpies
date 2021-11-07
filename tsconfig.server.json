@@ -13,5 +13,7 @@
         "strict": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
-    }
+        "experimentalDecorators": true,
+    },
+    "exclude": ["node_modules"]
 }

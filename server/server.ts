@@ -1,5 +1,4 @@
 import express from 'express';
-import "reflect-metadata";
 import fs from 'fs';
 import path from 'path';
 import React from 'react';
@@ -26,8 +25,17 @@ expressServer.get('/',(req,res)=>{
 });
 
 const httpServer = createServer(expressServer);
+
+const io = socketServer(httpServer);
+io.on("connection", (socket)=>{
+    console.log(`New socket connected ${socket.id}`);
+
+    socket.on("create_room",(anObject)=>{
+        console.log('generate a random code');
+    })
+});
+
 httpServer.listen(3000, ()=> {
     console.log(`Server running on http://localhost:3000`);
 });
 
-const io = socketServer(httpServer);
