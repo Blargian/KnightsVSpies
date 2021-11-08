@@ -11,7 +11,7 @@ export class RoomController {
 
     public addRoom(callingSocket:Socket){
         const newRoom = new Room(callingSocket);
-        this.rooms.push()
+        this.rooms.push(newRoom);
     }
 
     public getRoomCount() : number {

@@ -14,6 +14,8 @@
         "strictNullChecks": true,
         "noImplicitAny": true,
         "experimentalDecorators": true,
+        "esModuleInterop": true
     },
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules"],
+    "allowSyntheticDefaultImports": true,
 }

@@ -12,7 +12,8 @@
       "strict": true,
       "strictNullChecks": true,
       "noImplicitAny": true,
-      "experimentalDecorators": true
+      "experimentalDecorators": true,
+      "esModuleInterop": true
     },
     "exclude": ["node_modules"]
   }

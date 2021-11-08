@@ -9,7 +9,7 @@ import randomstring from "randomstring";
 
 export class Room {
     public roomId: string = '';
-    public players: Array<Socket> = [];
+    public players: Map<string,Socket> = new Map();
     public gameStarted: boolean = false;
     
     constructor(
@@ -20,7 +20,7 @@ export class Room {
     }
 
     private addPlayer(player:Socket){
-        this.players.push(player);
+        this.players.set(player.id,player);
     }
 
     private generateRoomCode() {

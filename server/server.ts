@@ -32,12 +32,7 @@ const controller = new MainController();
 
 io.on("connection", (socket)=>{
     console.log(`New socket connected ${socket.id}`);
-
-    socket.on("create_room",()=>{
-        controller.roomController.addRoom(socket);    
-        const numberOfRooms = controller.roomController.getRoomCount(); 
-        console.log(`Number of rooms currently created is: ${numberOfRooms}`);    
-    });
+    controller.handleSocket(socket);
 });
 
 httpServer.listen(3000, ()=> {
