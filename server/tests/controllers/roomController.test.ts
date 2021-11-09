@@ -30,13 +30,18 @@ describe("The room controller", () => {
         clientSocket.close();
     });
 
-    test('should correctly display the number of rooms',async()=>{
-        await serverSocket.on("test_event", ()=>{
+    test('should correctly display the number of rooms',(done)=>{
+        expect.assertions(1);
+        serverSocket.on("test_event", (callback)=>{
             roomController.addRoom(serverSocket);
+            if(callback){
+                callback();
+            }
         });
-        await clientSocket.emit('test_event');
-        await clientSocket.emit('test_event',(response)=>{
-            expect(roomController.getRoomCount).toEqual(2);
+        clientSocket.emit('test_event');
+        clientSocket.emit('test_event',(response)=>{
+            done();
+            expect(roomController.getRoomCount()).toEqual(2);
         });
     });
     
