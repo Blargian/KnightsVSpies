@@ -26,5 +26,16 @@ I'll start with something basic and just go along with it. If my approach is not
 Useful links:
 - [Using commonJS modules in typescript](https://medium.com/@steveruiz/using-a-javascript-library-without-type-declarations-in-a-typescript-project-3643490015f3)
 
-Had a lot of trouble actually testing sockets. [This example](https://socket.io/docs/v4/testing/) was eventually what I used to get it to work. Ran into 'openHandler' issues with Jest. 
+Had a lot of trouble actually testing sockets. [This example](https://socket.io/docs/v4/testing/) was eventually what I used to get it to work. Ran into 'openHandler' issues with Jest.
 
+Have made some progress on testing with sockets. Now I need to think about how the routing will work. 
+I'm not sure if this ought to be done on the client side or on the server side. I think both would be valid approaches. Maybe just depends on where I want to shift the complexity, to the frontend or to the backend.
+
+After thinking about the problem a bit more closely I now feel that server-side rendering actually offers no advantage in this particular situation. Frontend and backend can be completely uncoupled apart from a socket.io layer in between. To that end I have been thinking of a way that I can share the state between the client and backend. I basically want to emit events from the client side, process them accordingly on the back-end and update the state and have the client-side consume the state whenever it changes. I found an interesting three part series by valerii-udodov which formulates what I want to do quite well. Link to the [article](https://valerii-udodov.com/posts/server-side-redux/server-side-redux-3-the-code/) and to the [github repository](https://github.com/vudodov/tic-tac-toe-redux-example). Going to clone this repository and play around with this for a little bit trying to get a clearer idea of if this approach will scale in my own application. 
+
+![Architecture](./images/application-design.png)
+
+Another thing to think about is scalability. In the example above if I have a load balancer and run multiple instances of Node.js then the store is going to be duplicated multiple times. 
+Ideally only want one place where the data is stored and multiple node processes can access it. I.e "shared state". However for the purposes of this project I just want to practise some fullstack development so I am not going to worry about that too much. 
+
+Now have a bit of restructuring to do. I'll use create-react-app on the front-end. No need for such a fancy SSR setup with custom spun webpack. 

@@ -42,7 +42,7 @@ compiler.watch({},(err,stats) => {
         console.log('Starting Node.js ...')
         node = spawn(
         'node',
-        ['--inspect', path.join(__dirname, 'dist/server.js')],
+        ['--inspect', path.join(__dirname, 'public','server.js')],
         {
             stdio: 'inherit',
         }
