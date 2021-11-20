@@ -1,16 +1,15 @@
 import React, {useState} from 'react';
-import { Socket } from 'socket.io-client';
+import {connect} from 'react-redux';
 
 interface HomepageProps {
-    userSocket: Socket
+  
 }
 
-const Homepage: React.FC<HomepageProps> = ({userSocket}: HomepageProps) => {
+const Homepage: React.FC<HomepageProps> = () => {
 
     const [roomCode, setRoomCode] = useState('');
 
     const createRoom = () =>{
-        userSocket.emit("create_room");
     };
 
     const enterRoomcode = (e: React.FormEvent<HTMLInputElement>) =>{
@@ -19,7 +18,6 @@ const Homepage: React.FC<HomepageProps> = ({userSocket}: HomepageProps) => {
 
     const enterRoomcodeSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
-        userSocket.emit("enter_roomcode", {"roomcode":roomCode});
     }
 
     return (
@@ -34,4 +32,8 @@ const Homepage: React.FC<HomepageProps> = ({userSocket}: HomepageProps) => {
     );
 }
 
-export default Homepage;
+const mapDispatchToProps = (dispatch) => {
+
+}
+
+export default connect(null, mapDispatchToProps)(Homepage)
