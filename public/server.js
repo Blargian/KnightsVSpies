@@ -2,168 +2,31 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./server/controllers/mainController.ts":
-/*!**********************************************!*\
-  !*** ./server/controllers/mainController.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MainController = void 0;
-const roomController_1 = __webpack_require__(/*! ./roomController */ "./server/controllers/roomController.ts");
-class MainController {
-    constructor() {
-        this.roomController = new roomController_1.RoomController();
-    }
-    handleSocket(socket) {
-        console.log('Handle the socket');
-        let roomIdTest = '';
-        socket.on("create_room", () => {
-            roomIdTest = this.roomController.addRoom(socket);
-            console.log(`New room added: ${roomIdTest}`);
-            console.log(`Number of rooms currently created is: ${this.roomController.getRoomCount()}`);
-        });
-        socket.on("enter_roomcode", (data) => {
-            console.log(`User submitted roomcode: ${data.roomcode}`);
-            console.log(this.roomController.roomExists(data.roomcode));
-            socket.emit("enter_roomcode", this.roomController.roomExists(data.roomcode));
-        });
-    }
-}
-exports.MainController = MainController;
-
-
-/***/ }),
-
-/***/ "./server/controllers/roomController.ts":
-/*!**********************************************!*\
-  !*** ./server/controllers/roomController.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoomController = void 0;
-const roomModel_1 = __webpack_require__(/*! ../models/roomModel */ "./server/models/roomModel.ts");
-class RoomController {
-    constructor() {
-        this.rooms = [];
-    }
-    addRoom(callingSocket) {
-        const newRoom = new roomModel_1.Room(callingSocket);
-        this.rooms.push(newRoom);
-        return newRoom.roomId;
-    }
-    getRoomCount() {
-        return this.rooms.length;
-    }
-    roomExists(enteredRoomCode) {
-        const room = this.rooms.some(room => room.roomId === enteredRoomCode);
-        return room ? true : false;
-    }
-}
-exports.RoomController = RoomController;
-
-
-/***/ }),
-
-/***/ "./server/models/roomModel.ts":
-/*!************************************!*\
-  !*** ./server/models/roomModel.ts ***!
-  \************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-/**
- * @class Model
- *
- * Manages the data of a room.
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Room = void 0;
-const randomstring_1 = __importDefault(__webpack_require__(/*! randomstring */ "randomstring"));
-class Room {
-    constructor(callingPlayer) {
-        this.roomId = '';
-        this.players = new Map();
-        this.gameStarted = false;
-        this.addPlayer(callingPlayer);
-        this.generateRoomCode();
-    }
-    addPlayer(player) {
-        this.players.set(player.id, player);
-    }
-    generateRoomCode() {
-        this.roomId = randomstring_1.default.generate({
-            length: 6,
-            charset: 'alphanumeric'
-        });
-    }
-}
-exports.Room = Room;
-
-
-/***/ }),
-
-/***/ "./server/server.ts":
+/***/ "./server/socket.js":
 /*!**************************!*\
-  !*** ./server/server.ts ***!
+  !*** ./server/socket.js ***!
   \**************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var socket_io__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! socket.io */ "socket.io");
+/* harmony import */ var socket_io__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(socket_io__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
 
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const express_1 = __importDefault(__webpack_require__(/*! express */ "express"));
-const socket_1 = __importDefault(__webpack_require__(/*! ./socket */ "./server/socket.ts"));
-const http_1 = __webpack_require__(/*! http */ "http");
-const mainController_1 = __webpack_require__(/*! ./controllers/mainController */ "./server/controllers/mainController.ts");
-const path_1 = __importDefault(__webpack_require__(/*! path */ "path"));
-const publicPath = path_1.default.join(__dirname, '..', 'public');
-const expressServer = (0, express_1.default)();
-expressServer.use(express_1.default.static(publicPath));
-expressServer.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(publicPath, 'index.html'));
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function (httpServer) {
+  console.log('Setting up socket.io server...');
+  var io = new socket_io__WEBPACK_IMPORTED_MODULE_0__.Server(httpServer, {
+    cors: {
+      origin: "*"
+    }
+  });
+  return io;
 });
-const httpServer = (0, http_1.createServer)(expressServer);
-const io = (0, socket_1.default)(httpServer);
-const controller = new mainController_1.MainController();
-io.on("connection", (socket) => {
-    console.log(`New socket connected ${socket.id}`);
-    controller.handleSocket(socket);
-});
-httpServer.listen(3000, () => {
-    console.log(`Server running on http://localhost:3000`);
-});
-
-
-/***/ }),
-
-/***/ "./server/socket.ts":
-/*!**************************!*\
-  !*** ./server/socket.ts ***!
-  \**************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const socket_io_1 = __webpack_require__(/*! socket.io */ "socket.io");
-exports["default"] = (httpServer) => {
-    console.log('Setting up socket.io server...');
-    const io = new socket_io_1.Server(httpServer, {
-        cors: {
-            origin: "*"
-        },
-    });
-    return io;
-};
-
 
 /***/ }),
 
@@ -174,16 +37,6 @@ exports["default"] = (httpServer) => {
 /***/ ((module) => {
 
 module.exports = require("express");
-
-/***/ }),
-
-/***/ "randomstring":
-/*!*******************************!*\
-  !*** external "randomstring" ***!
-  \*******************************/
-/***/ ((module) => {
-
-module.exports = require("randomstring");
 
 /***/ }),
 
@@ -237,19 +90,85 @@ module.exports = require("path");
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
 /******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./server/server.ts");
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**************************!*\
+  !*** ./server/server.js ***!
+  \**************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! express */ "express");
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _socket__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./socket */ "./server/socket.js");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! http */ "http");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+var publicPath = path__WEBPACK_IMPORTED_MODULE_3___default().join(__dirname, '..', 'public');
+var expressServer = express__WEBPACK_IMPORTED_MODULE_0___default()();
+expressServer.use(express__WEBPACK_IMPORTED_MODULE_0___default()["static"](publicPath));
+expressServer.get('*', function (req, res) {
+  res.sendFile(path__WEBPACK_IMPORTED_MODULE_3___default().join(publicPath, 'index.html'));
+});
+var httpServer = (0,http__WEBPACK_IMPORTED_MODULE_2__.createServer)(expressServer);
+var io = (0,_socket__WEBPACK_IMPORTED_MODULE_1__["default"])(httpServer);
+httpServer.listen(3000, function () {
+  console.log("Server running on http://localhost:3000");
+});
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=server.js.map

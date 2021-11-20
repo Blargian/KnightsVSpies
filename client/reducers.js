@@ -1,17 +1,15 @@
 import { configureStore, createSlice, combineReducers, PayloadAction} from "@reduxjs/toolkit";
-import {Room} from './models/roomModel';
-import {Socket} from 'socket.io';
 
-const initialState : Room[] = [];
+const initialState = {
+    message: ''
+}
 
 const roomsSlice = createSlice({
     name: "rooms",
     initialState,
     reducers: {
-        createRoom(state, action: PayloadAction<Socket>){
-            const newRoom = new Room(action.payload);
-            state.push(newRoom);
-            console.log(state);
+        updateMessage(state, action){
+            return {...state,message:action.payload};
         }
     }
 });
@@ -23,5 +21,5 @@ export const rootReducer = combineReducers({
 
 //Make action creators accesible 
 export const {
-    createRoom: createRoomActionCreator,
+    updateMessage: updateMessageActionCreator,
 } = roomsSlice.actions;

@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
     name: 'server',
     entry: {
-        server: path.resolve(__dirname,'server/server.ts'),
+        server: path.resolve(__dirname,'server/server.js'),
     },
     mode: 'production',
     output: {
@@ -12,7 +12,7 @@ module.exports = {
         filename: '[name].js'
     },
     resolve: {
-        extensions: ['.ts','.tsx'],
+        extensions: ['.js','.jsx'],
     },
     externals: [nodeExternals()],
     target: 'node',
@@ -22,11 +22,9 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                loader: 'ts-loader',
-                options: {
-                    configFile: 'tsconfig.server.json',
-                },
+                test: /\.jsx?$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/
             },
         ],
     },

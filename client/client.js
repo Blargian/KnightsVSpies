@@ -1,14 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
-import { io } from "socket.io-client";
-import { Provider } from 'react-redux';
-
-const socket = io("http://localhost:8090");
+import store from './store.js';
+import {Provider} from "react-redux";
 
 ReactDOM.render(
   <Provider store={store}>
-    <App/>
+    <App />
   </Provider>,
   document.getElementById('root')
 );
