@@ -1,10 +1,13 @@
 import { configureStore, createSlice, combineReducers, PayloadAction} from "@reduxjs/toolkit";
 import { rootReducer } from "./reducers";
-import {myMiddleware} from "./socketMiddleware";
+import {socketMiddleware} from "./socketMiddleware";
+import { io } from "socket.io-client";
+
+const socket = io();
 
 const store = configureStore({
     reducer: rootReducer,
-    middleware: [myMiddleware],
+    middleware: [socketMiddleware(socket)],
     devTools: true
 });
 export default store;

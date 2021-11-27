@@ -1,25 +1,47 @@
 import { configureStore, createSlice, combineReducers, PayloadAction} from "@reduxjs/toolkit";
 
 const initialState = {
-    message: ''
+    game: {
+        missionLeader: false,
+        leaderSelection: [],
+        round: 0,
+        closeEyes: false,
+        spies: [],
+        knights: [],
+        votesPass: 0,
+        votesFail: 0,
+    }
+}
+
+const initialRoomState = {
+    selfId: '',
+    selfAlias: '',
+    players: [],
+    roomCode: '',
 }
 
 const roomsSlice = createSlice({
-    name: "rooms",
-    initialState,
+    name: "room",
+    initialState:initialRoomState,
     reducers: {
-        updateMessage(state, action){
-            return {...state,message:action.payload};
+        ioCreateRoom(state,action){
+        },
+        roomCreated(state,{action,payload}){
+            state.roomCode = payload.roomCode;
+            state.selfId = payload.selfId; 
+            return state; 
         }
     }
 });
 
 //Root reducer for usage in the store
 export const rootReducer = combineReducers({
-    rooms: roomsSlice.reducer
+    room: roomsSlice.reducer
 });
 
 //Make action creators accesible 
 export const {
-    updateMessage: updateMessageActionCreator,
+    ioCreateRoom,
+    roomCreated,
 } = roomsSlice.actions;
+

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {updateMessageActionCreator} from '../reducers'
+import {ioCreateRoom} from '../reducers'
 import { useSelector, useDispatch, connect} from 'react-redux'
 
 
@@ -11,24 +11,27 @@ const App = (props) => {
     const formSubmitHandler = (e) => {
         e.preventDefault();
         dispatch(updateMessageActionCreator(message))
-        console.log(props)
         setMessage('');
+    }
+
+    const createRoomHandler = () => {
+        dispatch(ioCreateRoom());
     }
 
     return (
         <div>
-            <h1>Hello Spy Spy</h1>
-            <form onSubmit={formSubmitHandler}>
-                <input value={message} onChange={(e)=>{setMessage(e.target.value)}}></input>
-                <button>submit</button>
-                <h2>{props.messageFromState}</h2>
+            <button onClick={createRoomHandler}>Create Room</button>
+            <form>
+                <label>Enter room code</label>
+                <input></input>
+                <button>X</button>
             </form>
         </div>
     );
 }
 const mapStateToProps = (state) => {
     return {
-        messageFromState: state.rooms.message
+        messageFromState: state.room.message
     }
 };
 
