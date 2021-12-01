@@ -16,7 +16,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "navigateToLobby": () => (/* binding */ navigateToLobby),
 /* harmony export */   "ioEnterRoomCode": () => (/* binding */ ioEnterRoomCode),
 /* harmony export */   "updatePlayers": () => (/* binding */ updatePlayers),
-/* harmony export */   "updateSelf": () => (/* binding */ updateSelf)
+/* harmony export */   "updateSelf": () => (/* binding */ updateSelf),
+/* harmony export */   "errorOccured": () => (/* binding */ errorOccured)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
@@ -43,7 +44,8 @@ var initialRoomState = {
   selfId: '',
   selfAlias: '',
   players: [],
-  roomCode: ''
+  roomCode: '',
+  error: null
 };
 var roomsSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
   name: "room",
@@ -70,6 +72,13 @@ var roomsSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
       var action = _ref4.action,
           payload = _ref4.payload;
       return _objectSpread(_objectSpread({}, state), payload);
+    },
+    errorOccured: function errorOccured(state, _ref5) {
+      var action = _ref5.action,
+          payload = _ref5.payload;
+      return _objectSpread(_objectSpread({}, state), {}, {
+        error: payload
+      });
     }
   }
 }); //Root reducer for usage in the store
@@ -84,7 +93,8 @@ var _roomsSlice$actions = roomsSlice.actions,
     navigateToLobby = _roomsSlice$actions.navigateToLobby,
     ioEnterRoomCode = _roomsSlice$actions.ioEnterRoomCode,
     updatePlayers = _roomsSlice$actions.updatePlayers,
-    updateSelf = _roomsSlice$actions.updateSelf;
+    updateSelf = _roomsSlice$actions.updateSelf,
+    errorOccured = _roomsSlice$actions.errorOccured;
 
 
 /***/ }),
@@ -133,20 +143,23 @@ var GameController = /*#__PURE__*/function () {
 
     this.joinRoom = function (enteredRoomCode, io, socket) {
       if (this.checkRoomExists(enteredRoomCode)) {
-        socket.join(enteredRoomCode);
-        var room = this.rooms.get(enteredRoomCode);
-        this.addPlayerToRoomMap(room, socket.id);
-        var players = this.addPlayerToRoom(enteredRoomCode, socket.id); //update this players state 
+        if (!this.roomIsFull(enteredRoomCode)) {
+          socket.join(enteredRoomCode);
+          var room = this.rooms.get(enteredRoomCode);
+          this.addPlayerToRoomMap(room, socket.id);
+          var players = this.addPlayerToRoom(enteredRoomCode, socket.id); //update this players state 
 
-        io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updateSelf.type, this.formattedPlayer(enteredRoomCode, players, socket.id)); //update all players state with the list of players
+          io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updateSelf.type, this.formattedPlayer(enteredRoomCode, players, socket.id)); //update all players state with the list of players
 
-        io["in"](enteredRoomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updatePlayers.type, players);
+          io["in"](enteredRoomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updatePlayers.type, players);
+        } else {
+          io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.errorOccured.type, 'roomIsFull');
+        }
       } else {}
     };
 
     this.playerLeft = function (playerId, io) {
       try {
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().blue("removing player: ".concat(playerId)));
         this.removePlayerFromRoom(playerId, io);
       } catch (error) {
         console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red('an error occured trying to remove a player from their room'));
@@ -182,6 +195,11 @@ var GameController = /*#__PURE__*/function () {
       };
     };
 
+    this.roomIsFull = function (roomCode) {
+      var room = this.rooms.get(roomCode);
+      return room.players.length < 10 ? false : true;
+    };
+
     this.rooms = new Map();
     this.playersToRooms = new Map();
   }
@@ -209,22 +227,12 @@ var GameController = /*#__PURE__*/function () {
   }, {
     key: "removePlayerFromRoom",
     value: function removePlayerFromRoom(playerId, io) {
-      console.log(playerId);
-
-      if (this.playersToRooms.size === 0) {
+      if (this.playersToRooms.size === 0 || this.playersToRooms.get(playerId) === undefined) {
         return;
       }
 
       var roomName = this.playersToRooms.get(playerId);
-
-      function logMapElements(value, key, map) {
-        console.log("m[".concat(key, "] = ").concat(value));
-      }
-
-      this.playersToRooms.forEach(logMapElements);
       var playerRoom = this.rooms.get(roomName);
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().green(playerRoom));
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().green(this.rooms));
       var remainingPlayers = playerRoom.players.filter(function (player) {
         return player.playerID !== playerId;
       });

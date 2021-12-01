@@ -1,7 +1,8 @@
 import {
     roomCreated,
     updatePlayers,
-    updateSelf
+    updateSelf,
+    errorOccured
 } from '../../client/reducers';
 
 import { Room } from '../models/room';
@@ -25,14 +26,18 @@ export default class GameController{
 
     joinRoom = function(enteredRoomCode,io,socket){
         if(this.checkRoomExists(enteredRoomCode)){
-            socket.join(enteredRoomCode);
-            const room = this.rooms.get(enteredRoomCode)
-            this.addPlayerToRoomMap(room,socket.id)
-            const players = this.addPlayerToRoom(enteredRoomCode,socket.id)
-            //update this players state 
-            io.to(socket.id).emit(updateSelf.type,this.formattedPlayer(enteredRoomCode,players,socket.id));
-            //update all players state with the list of players
-            io.in(enteredRoomCode).emit(updatePlayers.type,players);
+            if(!this.roomIsFull(enteredRoomCode)){
+                socket.join(enteredRoomCode);
+                const room = this.rooms.get(enteredRoomCode)
+                this.addPlayerToRoomMap(room,socket.id)
+                const players = this.addPlayerToRoom(enteredRoomCode,socket.id)
+                //update this players state 
+                io.to(socket.id).emit(updateSelf.type,this.formattedPlayer(enteredRoomCode,players,socket.id));
+                //update all players state with the list of players
+                io.in(enteredRoomCode).emit(updatePlayers.type,players);
+            } else {
+                io.to(socket.id).emit(errorOccured.type,'roomIsFull');
+            }
         } else{
             
         }          
@@ -40,7 +45,6 @@ export default class GameController{
 
     playerLeft = function(playerId,io){
         try{
-            console.log(chalk.blue(`removing player: ${playerId}`))
             this.removePlayerFromRoom(playerId,io)
         } catch(error){
             console.log(chalk.red('an error occured trying to remove a player from their room'));
@@ -96,14 +100,11 @@ export default class GameController{
 
     removePlayerFromRoom(playerId,io){
         
-        console.log(playerId)
-        if(this.playersToRooms.size===0){
+        if(this.playersToRooms.size===0 || this.playersToRooms.get(playerId) === undefined){
             return;
         }
         let roomName = this.playersToRooms.get(playerId);
         let playerRoom = this.rooms.get(roomName);
-        console.log(chalk.green(playerRoom))
-        console.log(chalk.green(this.rooms))
         let remainingPlayers = playerRoom.players.filter((player)=>{
             return player.playerID !== playerId
         });
@@ -119,6 +120,11 @@ export default class GameController{
             this.rooms.set(roomName,playerRoom);
             io.in(roomName).emit(updatePlayers.type,remainingPlayers);
         } 
+    }
+
+    roomIsFull = function(roomCode) {
+        let room = this.rooms.get(roomCode);
+        return room.players.length < 10 ? false : true; 
     }
 }
 

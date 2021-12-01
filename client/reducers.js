@@ -18,6 +18,7 @@ const initialRoomState = {
     selfAlias: '',
     players: [],
     roomCode: '',
+    error: null,
 }
 
 const roomsSlice = createSlice({
@@ -39,6 +40,12 @@ const roomsSlice = createSlice({
                 ...state,
                 ...payload
             }
+        },
+        errorOccured(state,{action,payload}){
+            return {
+                ...state,
+                error: payload
+            }
         }
 
 
@@ -57,6 +64,7 @@ export const {
     navigateToLobby,
     ioEnterRoomCode,
     updatePlayers,
-    updateSelf
+    updateSelf,
+    errorOccured,
 } = roomsSlice.actions;
 

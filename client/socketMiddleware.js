@@ -3,7 +3,8 @@ import {
     roomCreated,
     ioEnterRoomCode,
     updatePlayers,
-    updateSelf
+    updateSelf,
+    errorOccured
 } from './reducers'
 
 //A middleware to pass actions to the server 
@@ -20,6 +21,10 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
 
     socket.on(updateSelf.type,(payload)=>{
         dispatch(updateSelf(payload));
+    });
+
+    socket.on(errorOccured.type,(payload)=>{
+        dispatch(errorOccured(payload));
     });
 
     return action => {
