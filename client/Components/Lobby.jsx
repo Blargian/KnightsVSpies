@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
  const Lobby = (props) => {
     return(
         <div>
-            <h1>Roomcode</h1>
+            <h2>Roomcode</h2>
             <h2>{props.roomCode}</h2>
             {props.selfAlias === 'Player1' ? <button>Start Game</button> : null}
             <ul>
