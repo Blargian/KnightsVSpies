@@ -27,10 +27,21 @@ const roomsSlice = createSlice({
         ioCreateRoom(state,action){
         },
         roomCreated(state,{action,payload}){
-            state.roomCode = payload.roomCode;
-            state.selfId = payload.selfId; 
-            return state; 
+            return {...state,...payload}; 
+        },
+        ioEnterRoomCode(state,{action,payload}){            
+        },
+        updatePlayers(state,{action,payload}){
+            return {...state, players: payload}
+        },
+        updateSelf(state,{action,payload}){
+            return {
+                ...state,
+                ...payload
+            }
         }
+
+
     }
 });
 
@@ -43,5 +54,9 @@ export const rootReducer = combineReducers({
 export const {
     ioCreateRoom,
     roomCreated,
+    navigateToLobby,
+    ioEnterRoomCode,
+    updatePlayers,
+    updateSelf
 } = roomsSlice.actions;
 

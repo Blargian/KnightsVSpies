@@ -3,22 +3,26 @@ import { io } from "socket.io-client";
 
 export class Room {
 
-    constructor(callingPlayer){
+    //callingPlayerId: socket.id
+    constructor(callingPlayerId){
         this.roomCode = this.generateRoomCode();
         this.players = [];
+        this.addPlayer(callingPlayerId)
     }
 
-    generateRoomCode(){
+    generateRoomCode = function(){
         return randomstring.generate({
             length: 6,
             charset: 'alphanumeric'
         });
     }
 
-    addCallingPlayer(player){
+    addPlayer = function(callingPlayerId){
         this.players.push({
-            playerID:callingPlayer.id,
+            playerID:callingPlayerId,
+            selfAlias:`Player${this.players.length+1}`,
             readyToStart: false
         });
     }
+
 }

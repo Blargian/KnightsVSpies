@@ -3,7 +3,7 @@ import socketServer from "./socket";
 import {createServer} from 'http';
 import path from 'path';
 const publicPath = path.join(__dirname, '..', 'public');
-import GameController from './controllers/gameController';
+import MainController from './controllers/mainController';
 
 const expressServer = express();
 expressServer.use(express.static(publicPath));
@@ -19,6 +19,6 @@ httpServer.listen(3000, ()=> {
     console.log(`Server running on http://localhost:3000`);
 });
 
-const gameController = new GameController(io);
+const mainController = new MainController(io);
 
 
