@@ -1,7 +1,7 @@
 name: test-on-push
 on: [push]
 jobs:
-  check-bats-version:
+  run-jest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -10,7 +10,7 @@ jobs:
         with:
           node-version: '14.18.1'
       - run: npm install
-      - run: test:ci
+      - run: npm run test:ci
 
       - name: Tests ✅
         if: ${{ success() }}
