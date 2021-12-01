@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {ioCreateRoom,ioEnterRoomCode} from '../reducers'
+import {ioCreateRoom,ioEnterRoomCode,errorOccured} from '../reducers'
 import { useSelector, useDispatch, connect} from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 
@@ -15,6 +15,13 @@ const App = (props) => {
             navigate(`/${props.roomCode}/lobby`);
         }
     },[props.roomCode,navigate])
+
+    useEffect(()=>{
+        if(props.error==="roomIsFull"){
+            alert('Sorry, that room is full');
+            dispatch(errorOccured(null));
+        }
+    },[props.error])
 
     const createRoomHandler = () => {
         dispatch(ioCreateRoom());
