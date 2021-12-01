@@ -2,168 +2,386 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./server/controllers/mainController.ts":
-/*!**********************************************!*\
-  !*** ./server/controllers/mainController.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ "./client/reducers.js":
+/*!****************************!*\
+  !*** ./client/reducers.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "rootReducer": () => (/* binding */ rootReducer),
+/* harmony export */   "ioCreateRoom": () => (/* binding */ ioCreateRoom),
+/* harmony export */   "roomCreated": () => (/* binding */ roomCreated),
+/* harmony export */   "navigateToLobby": () => (/* binding */ navigateToLobby),
+/* harmony export */   "ioEnterRoomCode": () => (/* binding */ ioEnterRoomCode),
+/* harmony export */   "updatePlayers": () => (/* binding */ updatePlayers),
+/* harmony export */   "updateSelf": () => (/* binding */ updateSelf)
+/* harmony export */ });
+/* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
+/* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MainController = void 0;
-const roomController_1 = __webpack_require__(/*! ./roomController */ "./server/controllers/roomController.ts");
-class MainController {
-    constructor() {
-        this.roomController = new roomController_1.RoomController();
-    }
-    handleSocket(socket) {
-        console.log('Handle the socket');
-        let roomIdTest = '';
-        socket.on("create_room", () => {
-            roomIdTest = this.roomController.addRoom(socket);
-            console.log(`New room added: ${roomIdTest}`);
-            console.log(`Number of rooms currently created is: ${this.roomController.getRoomCount()}`);
-        });
-        socket.on("enter_roomcode", (data) => {
-            console.log(`User submitted roomcode: ${data.roomcode}`);
-            console.log(this.roomController.roomExists(data.roomcode));
-            socket.emit("enter_roomcode", this.roomController.roomExists(data.roomcode));
-        });
-    }
-}
-exports.MainController = MainController;
-
-
-/***/ }),
-
-/***/ "./server/controllers/roomController.ts":
-/*!**********************************************!*\
-  !*** ./server/controllers/roomController.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoomController = void 0;
-const roomModel_1 = __webpack_require__(/*! ../models/roomModel */ "./server/models/roomModel.ts");
-class RoomController {
-    constructor() {
-        this.rooms = [];
-    }
-    addRoom(callingSocket) {
-        const newRoom = new roomModel_1.Room(callingSocket);
-        this.rooms.push(newRoom);
-        return newRoom.roomId;
-    }
-    getRoomCount() {
-        return this.rooms.length;
-    }
-    roomExists(enteredRoomCode) {
-        const room = this.rooms.some(room => room.roomId === enteredRoomCode);
-        return room ? true : false;
-    }
-}
-exports.RoomController = RoomController;
-
-
-/***/ }),
-
-/***/ "./server/models/roomModel.ts":
-/*!************************************!*\
-  !*** ./server/models/roomModel.ts ***!
-  \************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-/**
- * @class Model
- *
- * Manages the data of a room.
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var initialState = {
+  game: {
+    missionLeader: false,
+    leaderSelection: [],
+    round: 0,
+    closeEyes: false,
+    spies: [],
+    knights: [],
+    votesPass: 0,
+    votesFail: 0
+  }
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Room = void 0;
-const randomstring_1 = __importDefault(__webpack_require__(/*! randomstring */ "randomstring"));
-class Room {
-    constructor(callingPlayer) {
-        this.roomId = '';
-        this.players = new Map();
-        this.gameStarted = false;
-        this.addPlayer(callingPlayer);
-        this.generateRoomCode();
-    }
-    addPlayer(player) {
-        this.players.set(player.id, player);
-    }
-    generateRoomCode() {
-        this.roomId = randomstring_1.default.generate({
-            length: 6,
-            charset: 'alphanumeric'
-        });
-    }
-}
-exports.Room = Room;
-
-
-/***/ }),
-
-/***/ "./server/server.ts":
-/*!**************************!*\
-  !*** ./server/server.ts ***!
-  \**************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var initialRoomState = {
+  selfId: '',
+  selfAlias: '',
+  players: [],
+  roomCode: ''
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const express_1 = __importDefault(__webpack_require__(/*! express */ "express"));
-const socket_1 = __importDefault(__webpack_require__(/*! ./socket */ "./server/socket.ts"));
-const http_1 = __webpack_require__(/*! http */ "http");
-const mainController_1 = __webpack_require__(/*! ./controllers/mainController */ "./server/controllers/mainController.ts");
-const path_1 = __importDefault(__webpack_require__(/*! path */ "path"));
-const publicPath = path_1.default.join(__dirname, '..', 'public');
-const expressServer = (0, express_1.default)();
-expressServer.use(express_1.default.static(publicPath));
-expressServer.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(publicPath, 'index.html'));
-});
-const httpServer = (0, http_1.createServer)(expressServer);
-const io = (0, socket_1.default)(httpServer);
-const controller = new mainController_1.MainController();
-io.on("connection", (socket) => {
-    console.log(`New socket connected ${socket.id}`);
-    controller.handleSocket(socket);
-});
-httpServer.listen(3000, () => {
-    console.log(`Server running on http://localhost:3000`);
-});
+var roomsSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
+  name: "room",
+  initialState: initialRoomState,
+  reducers: {
+    ioCreateRoom: function ioCreateRoom(state, action) {},
+    roomCreated: function roomCreated(state, _ref) {
+      var action = _ref.action,
+          payload = _ref.payload;
+      return _objectSpread(_objectSpread({}, state), payload);
+    },
+    ioEnterRoomCode: function ioEnterRoomCode(state, _ref2) {
+      var action = _ref2.action,
+          payload = _ref2.payload;
+    },
+    updatePlayers: function updatePlayers(state, _ref3) {
+      var action = _ref3.action,
+          payload = _ref3.payload;
+      return _objectSpread(_objectSpread({}, state), {}, {
+        players: payload
+      });
+    },
+    updateSelf: function updateSelf(state, _ref4) {
+      var action = _ref4.action,
+          payload = _ref4.payload;
+      return _objectSpread(_objectSpread({}, state), payload);
+    }
+  }
+}); //Root reducer for usage in the store
+
+var rootReducer = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.combineReducers)({
+  room: roomsSlice.reducer
+}); //Make action creators accesible 
+
+var _roomsSlice$actions = roomsSlice.actions,
+    ioCreateRoom = _roomsSlice$actions.ioCreateRoom,
+    roomCreated = _roomsSlice$actions.roomCreated,
+    navigateToLobby = _roomsSlice$actions.navigateToLobby,
+    ioEnterRoomCode = _roomsSlice$actions.ioEnterRoomCode,
+    updatePlayers = _roomsSlice$actions.updatePlayers,
+    updateSelf = _roomsSlice$actions.updateSelf;
 
 
 /***/ }),
 
-/***/ "./server/socket.ts":
-/*!**************************!*\
-  !*** ./server/socket.ts ***!
-  \**************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ "./server/controllers/gameController.js":
+/*!**********************************************!*\
+  !*** ./server/controllers/gameController.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ GameController)
+/* harmony export */ });
+/* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
+/* harmony import */ var _models_room__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/room */ "./server/models/room.js");
+/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chalk */ "chalk");
+/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(chalk__WEBPACK_IMPORTED_MODULE_2__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const socket_io_1 = __webpack_require__(/*! socket.io */ "socket.io");
-exports["default"] = (httpServer) => {
-    console.log('Setting up socket.io server...');
-    const io = new socket_io_1.Server(httpServer, {
-        cors: {
-            origin: "*"
-        },
+
+ // one instance is made on server start up
+
+var GameController = /*#__PURE__*/function () {
+  function GameController() {
+    _classCallCheck(this, GameController);
+
+    this.createRoom = function (io, playerId) {
+      var newRoom = new _models_room__WEBPACK_IMPORTED_MODULE_1__.Room(playerId);
+      this.addToRoomMap(newRoom);
+      this.addPlayerToRoomMap(newRoom, playerId);
+      io.to(playerId).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.roomCreated.type, this.formattedRoom(newRoom, playerId));
+      return newRoom.roomCode;
+    };
+
+    this.joinRoom = function (enteredRoomCode, io, socket) {
+      if (this.checkRoomExists(enteredRoomCode)) {
+        socket.join(enteredRoomCode);
+        var room = this.rooms.get(enteredRoomCode);
+        this.addPlayerToRoomMap(room, socket.id);
+        var players = this.addPlayerToRoom(enteredRoomCode, socket.id); //update this players state 
+
+        io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updateSelf.type, this.formattedPlayer(enteredRoomCode, players, socket.id)); //update all players state with the list of players
+
+        io["in"](enteredRoomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updatePlayers.type, players);
+      } else {}
+    };
+
+    this.playerLeft = function (playerId, io) {
+      try {
+        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().blue("removing player: ".concat(playerId)));
+        this.removePlayerFromRoom(playerId, io);
+      } catch (error) {
+        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red('an error occured trying to remove a player from their room'));
+        console.log(error);
+      }
+    };
+
+    this.addToRoomMap = function (newRoom) {
+      return this.rooms.set(newRoom.roomCode, newRoom);
+    };
+
+    this.addPlayerToRoomMap = function (newRoom, playerId) {
+      return this.playersToRooms.set(playerId, newRoom.roomCode);
+    };
+
+    this.formattedRoom = function (newRoom, playerId) {
+      return {
+        roomCode: newRoom.roomCode,
+        selfId: playerId,
+        selfAlias: newRoom.players[0].selfAlias,
+        players: newRoom.players
+      };
+    };
+
+    this.formattedPlayer = function (roomCode, playersArray, playerId) {
+      var selfAlias = playersArray.filter(function (player) {
+        return player.selfId === playerId;
+      }).selfAlias;
+      return {
+        roomCode: roomCode,
+        selfId: playerId,
+        selfAlias: selfAlias
+      };
+    };
+
+    this.rooms = new Map();
+    this.playersToRooms = new Map();
+  }
+
+  _createClass(GameController, [{
+    key: "checkRoomExists",
+    value: function checkRoomExists(enteredCode) {
+      return this.rooms.has(enteredCode);
+    }
+  }, {
+    key: "addPlayerToRoom",
+    value: function addPlayerToRoom(enteredRoomCode, player) {
+      var room = this.rooms.get(enteredRoomCode);
+
+      if (room) {
+        if (room.players.length < 10) {
+          room.addPlayer(player);
+        }
+
+        return room.players;
+      } else {
+        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red("no room was found for ".concat(enteredCode)));
+      }
+    }
+  }, {
+    key: "removePlayerFromRoom",
+    value: function removePlayerFromRoom(playerId, io) {
+      console.log(playerId);
+
+      if (this.playersToRooms.size === 0) {
+        return;
+      }
+
+      var roomName = this.playersToRooms.get(playerId);
+
+      function logMapElements(value, key, map) {
+        console.log("m[".concat(key, "] = ").concat(value));
+      }
+
+      this.playersToRooms.forEach(logMapElements);
+      var playerRoom = this.rooms.get(roomName);
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().green(playerRoom));
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().green(this.rooms));
+      var remainingPlayers = playerRoom.players.filter(function (player) {
+        return player.playerID !== playerId;
+      });
+      playerRoom = _objectSpread(_objectSpread({}, playerRoom), {}, {
+        players: remainingPlayers
+      });
+
+      if (playerRoom.players.length === 0) {
+        this.rooms["delete"](roomName);
+      } else {
+        this.rooms.set(roomName, playerRoom);
+        io["in"](roomName).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updatePlayers.type, remainingPlayers);
+      }
+    }
+  }]);
+
+  return GameController;
+}();
+
+
+
+/***/ }),
+
+/***/ "./server/controllers/mainController.js":
+/*!**********************************************!*\
+  !*** ./server/controllers/mainController.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MainController)
+/* harmony export */ });
+/* harmony import */ var _gameController__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameController */ "./server/controllers/gameController.js");
+/* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+ //Handles socket 
+
+var MainController = function MainController(io) {
+  var _this = this;
+
+  _classCallCheck(this, MainController);
+
+  this.io = io;
+  this.gamecontroller = new _gameController__WEBPACK_IMPORTED_MODULE_0__["default"]();
+  this.io.on("connection", function (socket) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioCreateRoom.type, function () {
+      socket.join(_this.gamecontroller.createRoom(_this.io, socket.id));
     });
-    return io;
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioEnterRoomCode.type, function (enteredRoomCode) {
+      _this.gamecontroller.joinRoom(enteredRoomCode, _this.io, socket);
+    });
+    socket.on("disconnect", function () {
+      _this.gamecontroller.playerLeft(socket.id, _this.io);
+    });
+  });
 };
 
+
+
+/***/ }),
+
+/***/ "./server/models/room.js":
+/*!*******************************!*\
+  !*** ./server/models/room.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Room": () => (/* binding */ Room)
+/* harmony export */ });
+/* harmony import */ var randomstring__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! randomstring */ "randomstring");
+/* harmony import */ var randomstring__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(randomstring__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! socket.io-client */ "socket.io-client");
+/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_1__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+var Room = //callingPlayerId: socket.id
+function Room(callingPlayerId) {
+  _classCallCheck(this, Room);
+
+  _initialiseProps.call(this);
+
+  this.roomCode = this.generateRoomCode();
+  this.players = [];
+  this.addPlayer(callingPlayerId);
+};
+
+var _initialiseProps = function _initialiseProps() {
+  this.generateRoomCode = function () {
+    return randomstring__WEBPACK_IMPORTED_MODULE_0___default().generate({
+      length: 6,
+      charset: 'alphanumeric'
+    });
+  };
+
+  this.addPlayer = function (callingPlayerId) {
+    this.players.push({
+      playerID: callingPlayerId,
+      selfAlias: "Player".concat(this.players.length + 1),
+      readyToStart: false
+    });
+  };
+};
+
+/***/ }),
+
+/***/ "./server/socket.js":
+/*!**************************!*\
+  !*** ./server/socket.js ***!
+  \**************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var socket_io__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! socket.io */ "socket.io");
+/* harmony import */ var socket_io__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(socket_io__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function (httpServer) {
+  console.log('Setting up socket.io server...');
+  var io = new socket_io__WEBPACK_IMPORTED_MODULE_0__.Server(httpServer, {
+    cors: {
+      origin: "*"
+    }
+  });
+  return io;
+});
+
+/***/ }),
+
+/***/ "@reduxjs/toolkit":
+/*!***********************************!*\
+  !*** external "@reduxjs/toolkit" ***!
+  \***********************************/
+/***/ ((module) => {
+
+module.exports = require("@reduxjs/toolkit");
+
+/***/ }),
+
+/***/ "chalk":
+/*!************************!*\
+  !*** external "chalk" ***!
+  \************************/
+/***/ ((module) => {
+
+module.exports = require("chalk");
 
 /***/ }),
 
@@ -194,6 +412,16 @@ module.exports = require("randomstring");
 /***/ ((module) => {
 
 module.exports = require("socket.io");
+
+/***/ }),
+
+/***/ "socket.io-client":
+/*!***********************************!*\
+  !*** external "socket.io-client" ***!
+  \***********************************/
+/***/ ((module) => {
+
+module.exports = require("socket.io-client");
 
 /***/ }),
 
@@ -237,19 +465,88 @@ module.exports = require("path");
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
 /******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./server/server.ts");
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**************************!*\
+  !*** ./server/server.js ***!
+  \**************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! express */ "express");
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _socket__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./socket */ "./server/socket.js");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! http */ "http");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _controllers_mainController__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controllers/mainController */ "./server/controllers/mainController.js");
+
+
+
+
+var publicPath = path__WEBPACK_IMPORTED_MODULE_3___default().join(__dirname, '..', 'public');
+
+var expressServer = express__WEBPACK_IMPORTED_MODULE_0___default()();
+expressServer.use(express__WEBPACK_IMPORTED_MODULE_0___default()["static"](publicPath));
+expressServer.get('*', function (req, res) {
+  res.sendFile(path__WEBPACK_IMPORTED_MODULE_3___default().join(publicPath, 'index.html'));
+});
+var httpServer = (0,http__WEBPACK_IMPORTED_MODULE_2__.createServer)(expressServer);
+var io = (0,_socket__WEBPACK_IMPORTED_MODULE_1__["default"])(httpServer);
+httpServer.listen(3000, function () {
+  console.log("Server running on http://localhost:3000");
+});
+var mainController = new _controllers_mainController__WEBPACK_IMPORTED_MODULE_4__["default"](io);
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=server.js.map

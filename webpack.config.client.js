@@ -4,9 +4,7 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 
 module.exports = {
     name: 'client',
-    entry: {
-      client: path.resolve(__dirname, 'client/client.tsx'),
-    },
+    entry: ['babel-polyfill','./client/client.js'],
     mode: 'production',
     output: {
       path: path.resolve(__dirname + '/public/dist'),
@@ -14,17 +12,15 @@ module.exports = {
       publicPath: '',
     },
     resolve: {
-      extensions: ['.ts', '.tsx', '.js'],
+      extensions: ['.jsx', '.js'],
     },
     target: 'web',
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
-          loader: 'ts-loader',
-          options: {
-            configFile: 'tsconfig.client.json',
-          },
+          test: /\.(js|jsx)$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/
         },
       ],
     },
