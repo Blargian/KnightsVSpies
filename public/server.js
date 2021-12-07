@@ -17,7 +17,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ioEnterRoomCode": () => (/* binding */ ioEnterRoomCode),
 /* harmony export */   "updatePlayers": () => (/* binding */ updatePlayers),
 /* harmony export */   "updateSelf": () => (/* binding */ updateSelf),
-/* harmony export */   "errorOccured": () => (/* binding */ errorOccured)
+/* harmony export */   "errorOccured": () => (/* binding */ errorOccured),
+/* harmony export */   "ioPlayerIsReady": () => (/* binding */ ioPlayerIsReady)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
@@ -79,6 +80,11 @@ var roomsSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
       return _objectSpread(_objectSpread({}, state), {}, {
         error: payload
       });
+    },
+    ioPlayerIsReady: function ioPlayerIsReady(state, _ref6) {
+      var action = _ref6.action,
+          payload = _ref6.payload;
+      return {};
     }
   }
 }); //Root reducer for usage in the store
@@ -94,7 +100,8 @@ var _roomsSlice$actions = roomsSlice.actions,
     ioEnterRoomCode = _roomsSlice$actions.ioEnterRoomCode,
     updatePlayers = _roomsSlice$actions.updatePlayers,
     updateSelf = _roomsSlice$actions.updateSelf,
-    errorOccured = _roomsSlice$actions.errorOccured;
+    errorOccured = _roomsSlice$actions.errorOccured,
+    ioPlayerIsReady = _roomsSlice$actions.ioPlayerIsReady;
 
 
 /***/ }),
@@ -117,13 +124,13 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -133,15 +140,15 @@ var GameController = /*#__PURE__*/function () {
   function GameController() {
     _classCallCheck(this, GameController);
 
-    this.createRoom = function (io, playerId) {
+    _defineProperty(this, "createRoom", function (io, playerId) {
       var newRoom = new _models_room__WEBPACK_IMPORTED_MODULE_1__.Room(playerId);
       this.addToRoomMap(newRoom);
       this.addPlayerToRoomMap(newRoom, playerId);
       io.to(playerId).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.roomCreated.type, this.formattedRoom(newRoom, playerId));
       return newRoom.roomCode;
-    };
+    });
 
-    this.joinRoom = function (enteredRoomCode, io, socket) {
+    _defineProperty(this, "joinRoom", function (enteredRoomCode, io, socket) {
       if (this.checkRoomExists(enteredRoomCode)) {
         if (!this.roomIsFull(enteredRoomCode)) {
           socket.join(enteredRoomCode);
@@ -156,35 +163,35 @@ var GameController = /*#__PURE__*/function () {
           io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.errorOccured.type, 'roomIsFull');
         }
       } else {}
-    };
+    });
 
-    this.playerLeft = function (playerId, io) {
+    _defineProperty(this, "playerLeft", function (playerId, io) {
       try {
         this.removePlayerFromRoom(playerId, io);
       } catch (error) {
         console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red('an error occured trying to remove a player from their room'));
         console.log(error);
       }
-    };
+    });
 
-    this.addToRoomMap = function (newRoom) {
+    _defineProperty(this, "addToRoomMap", function (newRoom) {
       return this.rooms.set(newRoom.roomCode, newRoom);
-    };
+    });
 
-    this.addPlayerToRoomMap = function (newRoom, playerId) {
+    _defineProperty(this, "addPlayerToRoomMap", function (newRoom, playerId) {
       return this.playersToRooms.set(playerId, newRoom.roomCode);
-    };
+    });
 
-    this.formattedRoom = function (newRoom, playerId) {
+    _defineProperty(this, "formattedRoom", function (newRoom, playerId) {
       return {
         roomCode: newRoom.roomCode,
         selfId: playerId,
         selfAlias: newRoom.players[0].selfAlias,
         players: newRoom.players
       };
-    };
+    });
 
-    this.formattedPlayer = function (roomCode, playersArray, playerId) {
+    _defineProperty(this, "formattedPlayer", function (roomCode, playersArray, playerId) {
       var selfAlias = playersArray.filter(function (player) {
         return player.selfId === playerId;
       }).selfAlias;
@@ -193,12 +200,26 @@ var GameController = /*#__PURE__*/function () {
         selfId: playerId,
         selfAlias: selfAlias
       };
-    };
+    });
 
-    this.roomIsFull = function (roomCode) {
+    _defineProperty(this, "roomIsFull", function (roomCode) {
       var room = this.rooms.get(roomCode);
       return room.players.length < 10 ? false : true;
-    };
+    });
+
+    _defineProperty(this, "updatePlayerReadiness", function (callingPlayerId) {
+      var room = this.rooms.get(this.playersToRooms.get(callingPlayerId));
+      var updatedPlayerArray = room.players.map(function (player) {
+        if (player.playerID === callingPlayerId) {
+          return _objectSpread(_objectSpread({}, player), {}, {
+            readyToStart: !player.readyToStart
+          });
+        } else {
+          return player;
+        }
+      });
+      return updatedPlayerArray;
+    });
 
     this.rooms = new Map();
     this.playersToRooms = new Map();
@@ -290,6 +311,9 @@ var MainController = function MainController(io) {
     socket.on("disconnect", function () {
       _this.gamecontroller.playerLeft(socket.id, _this.io);
     });
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioPlayerIsReady.type, function (callingPlayerId) {//call function which will flip the internal state
+      //send out an action to all players with the
+    });
   });
 };
 
@@ -313,34 +337,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_1__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 var Room = //callingPlayerId: socket.id
-function Room(callingPlayerId) {
+function Room(_callingPlayerId) {
   _classCallCheck(this, Room);
 
-  _initialiseProps.call(this);
-
-  this.roomCode = this.generateRoomCode();
-  this.players = [];
-  this.addPlayer(callingPlayerId);
-};
-
-var _initialiseProps = function _initialiseProps() {
-  this.generateRoomCode = function () {
+  _defineProperty(this, "generateRoomCode", function () {
     return randomstring__WEBPACK_IMPORTED_MODULE_0___default().generate({
       length: 6,
       charset: 'alphanumeric'
     });
-  };
+  });
 
-  this.addPlayer = function (callingPlayerId) {
+  _defineProperty(this, "addPlayer", function (callingPlayerId) {
     this.players.push({
       playerID: callingPlayerId,
       selfAlias: "Player".concat(this.players.length + 1),
       readyToStart: false
     });
-  };
+  });
+
+  this.roomCode = this.generateRoomCode();
+  this.players = [];
+  this.addPlayer(_callingPlayerId);
 };
 
 /***/ }),
