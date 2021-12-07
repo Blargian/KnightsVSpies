@@ -1,12 +1,20 @@
-import React from 'react';
-import {connect} from 'react-redux';
+import React,{useState} from 'react';
+import { useSelector, useDispatch,connect} from 'react-redux'
+import { ioPlayerIsReady } from '../reducers';
 
- const Lobby = (props) => {
+const Lobby = (props) => {
+
+    const dispatch = useDispatch();
+
+    const readyHandler = () => {
+        dispatch(ioPlayerIsReady(props.selfId));
+    }
+
     return(
         <div>
             <h2>Roomcode</h2>
             <h2>{props.roomCode}</h2>
-            {props.selfAlias === 'Player1' ? <button>Start Game</button> : null}
+            {props.selfAlias === 'Player1' ? <button>Start Game</button> : <button onClick={readyHandler}>Ready</button>}
             <ul>
                 {
                 props.players.map(player => {
@@ -17,7 +25,6 @@ import {connect} from 'react-redux';
                 })
                 }
             </ul>
-            <button>Ready</button>
         </div>
     )
 }

@@ -46,6 +46,9 @@ const roomsSlice = createSlice({
                 ...state,
                 error: payload
             }
+        },
+        ioPlayerIsReady(state,{action,payload}){
+            return {}
         }
 
 
@@ -66,5 +69,6 @@ export const {
     updatePlayers,
     updateSelf,
     errorOccured,
+    ioPlayerIsReady,
 } = roomsSlice.actions;
 

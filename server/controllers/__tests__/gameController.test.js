@@ -72,4 +72,12 @@ describe('Game controller', ()=>{
         });
         expect(gameController.roomIsFull(room.roomCode)).toEqual(false);
     });
+
+    test('updatePlayerReadiness returns an updated player array given the calling player ID',()=>{
+        let room = new Room(mockSocket.id);
+        gameController = new GameController();
+        gameController.addToRoomMap(room);
+        gameController.addPlayerToRoomMap(room,mockSocket.id);
+        expect(gameController.updatePlayerReadiness(mockSocket.id)[0].readyToStart).toBeTruthy();
+    })
 })
