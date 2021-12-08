@@ -11,7 +11,7 @@ Spy spy is a turn based realtime multiplayer online game inspired by the social 
 
 The project employs the following technologies
 
-<table>
+<table style="background: white">
   <tr>
     <td><image src="https://user-images.githubusercontent.com/41984034/145251294-62f43c4f-22e5-49b3-998f-35d14d2f29ba.png"></image></td>
     <td><image src="https://user-images.githubusercontent.com/41984034/145251219-67cf2c58-c5a3-4cab-957c-578f8373af10.png"></image></td>
@@ -20,6 +20,15 @@ The project employs the following technologies
     <td><image src="https://user-images.githubusercontent.com/41984034/145251479-3c8d2fad-3456-48df-883f-b17977fbf812.png"></image></td>
     <td><image src="https://user-images.githubusercontent.com/41984034/145251558-acf1c16d-f2db-4e98-a5a9-a3b868e33c1d.png"></image></td>
     <td><image src="https://user-images.githubusercontent.com/41984034/145251616-183dda9f-d056-43a9-9704-44c4bc4fcdd0.png"></image></td>
+  </tr>
+  <tr>
+    <td>React</td>
+    <td>Socket.io</td>
+    <td>Redux</td>
+    <td>NodeJS</td>
+    <td>Tailwind CSS</td>
+    <td>Github</td>
+    <td>Jest</td>
   </tr>
 </table>
 
