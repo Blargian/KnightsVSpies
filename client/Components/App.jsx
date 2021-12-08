@@ -32,14 +32,22 @@ const App = (props) => {
         dispatch(ioEnterRoomCode(e.target.userInput.value))
     }
 
+    const appClass="mx-auto p-10 flex flex-col gap-10";
+    const createButtonClass = 'text-black bg-white w-40 p-0.2';
+    const enterInputClass = 'text-black bg-white ml-10';
+    const enterButtonClass = 'text-white bg-blue ml-2 w-6';
+    const headerClass = 'text-white text-6xl text-center';
+
     return (
-        <div>
-            <button onClick={createRoomHandler}>Create Room</button>
-            <form onSubmit={enterRoomCodeHandler}>
-                <label>Enter room code</label>
-                <input type="text" name="userInput"></input>
-                <button>X</button>
-            </form>
+        <div className={appClass}>
+            <h1 className={headerClass}>Spy Spy</h1>
+            <div className="flex flex-row">
+                <button onClick={createRoomHandler} className={createButtonClass}>Create Room</button>
+                <form onSubmit={enterRoomCodeHandler}>
+                    <input className={enterInputClass} type="text" name="userInput" defaultValue="Enter roomcode"></input>
+                    <button className={enterButtonClass}>X</button>
+                </form>
+            </div>
         </div>
     );
 }

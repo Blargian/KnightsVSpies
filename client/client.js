@@ -5,6 +5,7 @@ import Lobby from './Components/Lobby';
 import store from './store.js';
 import {Provider} from "react-redux";
 import {BrowserRouter,Route,Routes} from "react-router-dom";
+import './style.css';
 
 ReactDOM.render(
   <Provider store={store}>
