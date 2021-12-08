@@ -12,7 +12,7 @@ Spy spy is a turn based realtime multiplayer online game inspired by the social 
 The project employs the following technologies
 
 <table>
-  <tr style="background-color: white">
+  <tr style="background-color: white;">
     <td><image src="https://user-images.githubusercontent.com/41984034/145251294-62f43c4f-22e5-49b3-998f-35d14d2f29ba.png"></image></td>
     <td><image src="https://user-images.githubusercontent.com/41984034/145251219-67cf2c58-c5a3-4cab-957c-578f8373af10.png"></image></td>
     <td><image src="https://user-images.githubusercontent.com/41984034/145251355-e1ea30f7-f4aa-4faa-908a-0cda5ee87428.png"></image></td>
