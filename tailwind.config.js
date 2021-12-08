@@ -6,7 +6,10 @@ module.exports = {
       colors:{
         gray: '#353535',
         blue: '#3DADFE',
-      }
+      },
+      backgroundImage: {
+        'spy': "url('Assets/spy_bg.svg')",
+       }
     },
   },
   variants: {

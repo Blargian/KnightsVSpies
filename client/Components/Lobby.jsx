@@ -10,11 +10,15 @@ const Lobby = (props) => {
         dispatch(ioPlayerIsReady(props.selfId));
     }
 
+    const appClass="p-10 flex flex-col gap-10 bg-spy";
+    const buttonClass = "bg-blue text-white"
+
     return(
-        <div>
-            <h2>Roomcode</h2>
-            <h2>{props.roomCode}</h2>
-            {props.selfAlias === 'Player1' ? <button>Start Game</button> : <button onClick={readyHandler}>Ready</button>}
+        <div className={appClass}>
+            <h2 className="text-white">Roomcode</h2>
+            <h2 className="text-white">{props.roomCode}</h2>
+            {props.selfAlias === 'Player1' ? <button className={buttonClass}>Start Game</button> : null}
+            <button className={buttonClass} onClick={readyHandler}>Ready</button>
             <ul>
                 {
                 props.players.map(player => {
