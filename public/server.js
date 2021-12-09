@@ -84,7 +84,6 @@ var roomsSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
     ioPlayerIsReady: function ioPlayerIsReady(state, _ref6) {
       var action = _ref6.action,
           payload = _ref6.payload;
-      return {};
     }
   }
 }); //Root reducer for usage in the store
@@ -221,6 +220,10 @@ var GameController = /*#__PURE__*/function () {
       return updatedPlayerArray;
     });
 
+    _defineProperty(this, "sendUpdatedPlayersToRoom", function (updatedPlayers, io, enteredRoomCode) {
+      io["in"](enteredRoomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_0__.updatePlayers.type, updatedPlayers);
+    });
+
     this.rooms = new Map();
     this.playersToRooms = new Map();
   }
@@ -311,8 +314,12 @@ var MainController = function MainController(io) {
     socket.on("disconnect", function () {
       _this.gamecontroller.playerLeft(socket.id, _this.io);
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioPlayerIsReady.type, function (callingPlayerId) {//call function which will flip the internal state
-      //send out an action to all players with the
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioPlayerIsReady.type, function (payload) {
+      var updatedPlayers = _this.gamecontroller.updatePlayerReadiness(payload.playerId);
+
+      _this.gamecontroller.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
+
+      _this.gamecontroller.sendUpdatedPlayersToRoom(updatedPlayers, io, payload.roomCode);
     });
   });
 };
@@ -358,6 +365,10 @@ function Room(_callingPlayerId) {
       selfAlias: "Player".concat(this.players.length + 1),
       readyToStart: false
     });
+  });
+
+  _defineProperty(this, "updatePlayers", function (newPlayerArray) {
+    this.players = newPlayerArray;
   });
 
   this.roomCode = this.generateRoomCode();

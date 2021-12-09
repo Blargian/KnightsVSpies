@@ -25,4 +25,8 @@ export class Room {
         });
     }
 
+    updatePlayers = function(newPlayerArray){
+        this.players = newPlayerArray;
+    }
+
 }

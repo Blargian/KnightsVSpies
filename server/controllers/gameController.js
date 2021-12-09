@@ -139,6 +139,10 @@ export default class GameController{
         })
         return updatedPlayerArray
     }
+
+    sendUpdatedPlayersToRoom = function(updatedPlayers,io,enteredRoomCode){
+        io.in(enteredRoomCode).emit(updatePlayers.type,updatedPlayers);
+    }
 }
 
 

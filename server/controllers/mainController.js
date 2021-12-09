@@ -25,9 +25,10 @@ export default class MainController {
                this.gamecontroller.playerLeft(socket.id,this.io)
             })
 
-            socket.on(ioPlayerIsReady.type,(callingPlayerId)=>{
-                //call function which will flip the internal state
-                //send out an action to all players with the
+            socket.on(ioPlayerIsReady.type,(payload)=>{
+                const updatedPlayers = this.gamecontroller.updatePlayerReadiness(payload.playerId);
+                this.gamecontroller.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
+                this.gamecontroller.sendUpdatedPlayersToRoom(updatedPlayers,io,payload.roomCode);
             })
         });
     }

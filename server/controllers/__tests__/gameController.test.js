@@ -79,5 +79,5 @@ describe('Game controller', ()=>{
         gameController.addToRoomMap(room);
         gameController.addPlayerToRoomMap(room,mockSocket.id);
         expect(gameController.updatePlayerReadiness(mockSocket.id)[0].readyToStart).toBeTruthy();
-    })
+    });
 })
