@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {ioCreateRoom,ioEnterRoomCode,errorOccured} from '../reducers'
 import { useSelector, useDispatch, connect} from 'react-redux'
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 
 const App = (props) => {
@@ -33,10 +35,20 @@ const App = (props) => {
     }
 
     const appClass="mx-auto p-10 flex flex-col gap-10";
-    const createButtonClass = 'text-black bg-white w-40 p-0.2';
-    const enterInputClass = 'text-black bg-white ml-10';
+    const createButtonClass = 'text-black bg-white w-32 p-0.2';
+    const enterInputClass = 'text-black w-24 p-1 bg-white ml-10 focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent';
     const enterButtonClass = 'text-white bg-blue ml-2 w-6';
     const headerClass = 'text-white text-6xl text-center';
+
+    const handleFocus = (e) => {
+        if(e.target.value==='Enter Code')
+            e.target.value='';
+    }
+
+    const handleBlur = (e) => {
+        if(e.target.value==='')
+            e.target.value='Enter Code';
+    }
 
     return (
         <div className={appClass}>
@@ -44,8 +56,8 @@ const App = (props) => {
             <div className="flex flex-row">
                 <button onClick={createRoomHandler} className={createButtonClass}>Create Room</button>
                 <form onSubmit={enterRoomCodeHandler}>
-                    <input className={enterInputClass} type="text" name="userInput" defaultValue="Enter roomcode"></input>
-                    <button className={enterButtonClass}>X</button>
+                    <input className={enterInputClass} type="text" name="userInput" defaultValue="Enter Code" onFocus={handleFocus} onBlur={handleBlur}></input>
+                    <button className={enterButtonClass}><FontAwesomeIcon icon={faCheck} /></button>
                 </form>
             </div>
         </div>
