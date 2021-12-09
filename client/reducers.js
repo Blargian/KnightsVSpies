@@ -48,10 +48,7 @@ const roomsSlice = createSlice({
             }
         },
         ioPlayerIsReady(state,{action,payload}){
-            return {}
         }
-
-
     }
 });
 
