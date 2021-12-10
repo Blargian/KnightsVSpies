@@ -208,7 +208,7 @@ var GameController = /*#__PURE__*/function () {
 
     _defineProperty(this, "updatePlayerReadiness", function (callingPlayerId) {
       var room = this.rooms.get(this.playersToRooms.get(callingPlayerId));
-      var updatedPlayerArray = room.players.map(function (player) {
+      var updatedPlayerArray = (room.players || []).map(function (player) {
         if (player.playerID === callingPlayerId) {
           return _objectSpread(_objectSpread({}, player), {}, {
             readyToStart: !player.readyToStart

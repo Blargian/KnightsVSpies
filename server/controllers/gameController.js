@@ -130,7 +130,7 @@ export default class GameController{
     //returns an updated player array where the callingPlayer's isReady property is flipped
     updatePlayerReadiness = function(callingPlayerId){
         const room = this.rooms.get(this.playersToRooms.get(callingPlayerId))
-        const updatedPlayerArray = room.players.map((player)=>{
+        const updatedPlayerArray = (room.players||[]).map((player)=>{
             if(player.playerID === callingPlayerId){
                 return {...player,readyToStart:!player.readyToStart}
             } else {
