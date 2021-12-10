@@ -2,7 +2,7 @@ import express from 'express';
 import socketServer from "./socket";
 import {createServer} from 'http';
 import path from 'path';
-const publicPath = path.join(__dirname, '..', 'public');
+const publicPath = path.join(__dirname, '..', 'public','dist');
 import MainController from './controllers/mainController';
 
 const expressServer = express();

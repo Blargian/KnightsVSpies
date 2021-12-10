@@ -1,4 +1,7 @@
 module.exports = {
+  content: [
+    './public/index.html',
+  ],
   purge: ['./public/*.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -11,9 +14,6 @@ module.exports = {
         green: '#11CD01',
         lightgreen: '#15FF01',
       },
-      backgroundImage: {
-        'spy': "url('Assets/spy_bg.svg')",
-       }
     },
   },
   variants: {

@@ -18,7 +18,7 @@ const Lobby = (props) => {
         }
     }
 
-    const appClass="bg-spy w-full align-center content-center p-10";
+    const appClass="w-full align-center content-center p-10 bg-spy";
     const startbuttonClass = "bg-blue text-white w-36 p-2 rounded-lg hover:bg-lightblue transition duration-500 ease-in-out";
     const startButtonClassUnable = "bg-lightgray text-white w-36 p-2 rounded-lg transition duration-500 ease-in-out";
     const readybuttonClass = `bg-blue text-white  w-36 p-2 rounded-lg hover:bg-lightblue transition duration-500 ease-in-out ${props.selfAlias === 'Player1' ? 'mt-2' : ''}`;

@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-spy {
+    background-image: url('assets/spy_bg.svg');  
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}

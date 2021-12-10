@@ -573,7 +573,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var publicPath = path__WEBPACK_IMPORTED_MODULE_3___default().join(__dirname, '..', 'public');
+var publicPath = path__WEBPACK_IMPORTED_MODULE_3___default().join(__dirname, '..', 'public', 'dist');
 
 var expressServer = express__WEBPACK_IMPORTED_MODULE_0___default()();
 expressServer.use(express__WEBPACK_IMPORTED_MODULE_0___default()["static"](publicPath));

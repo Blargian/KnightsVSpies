@@ -1,8 +1,6 @@
 /node_modules
 /package-lock.json
-/public/dist
-/client-old/
-/public/server.js
-/public/server.js.map
-/public/server.js
-/public/server.js.map
+/public/dist/*
+!/public/dist/index.html
+/public/server.js 
+/public/server.js.map 
