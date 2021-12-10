@@ -1,4 +1,4 @@
-import GameController from "./gameController";
+import LobbyController from "./lobbyController";
 import {
     ioCreateRoom,
     ioEnterRoomCode,
@@ -9,26 +9,26 @@ import {
 export default class MainController {
     constructor(io){
         this.io = io;
-        this.gamecontroller = new GameController();
+        this.lobbyController = new LobbyController();
 
         this.io.on("connection", (socket) => {
 
             socket.on(ioCreateRoom.type,()=>{
-                socket.join(this.gamecontroller.createRoom(this.io,socket.id));
+                socket.join(this.lobbyController.createRoom(this.io,socket.id));
             });
     
             socket.on(ioEnterRoomCode.type,(enteredRoomCode)=>{
-                 this.gamecontroller.joinRoom(enteredRoomCode,this.io,socket);
+                 this.lobbyController.joinRoom(enteredRoomCode,this.io,socket);
             });
 
             socket.on("disconnect",()=>{
-               this.gamecontroller.playerLeft(socket.id,this.io)
+               this.lobbyController.playerLeft(socket.id,this.io)
             })
 
             socket.on(ioPlayerIsReady.type,(payload)=>{
-                const updatedPlayers = this.gamecontroller.updatePlayerReadiness(payload.playerId);
-                this.gamecontroller.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
-                this.gamecontroller.sendUpdatedPlayersToRoom(updatedPlayers,io,payload.roomCode);
+                const updatedPlayers = this.lobbyController.updatePlayerReadiness(payload.playerId);
+                this.lobbyController.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
+                this.lobbyController.sendUpdatedPlayersToRoom(updatedPlayers,io,payload.roomCode);
             })
         });
     }

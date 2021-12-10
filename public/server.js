@@ -105,15 +105,15 @@ var _roomsSlice$actions = roomsSlice.actions,
 
 /***/ }),
 
-/***/ "./server/controllers/gameController.js":
-/*!**********************************************!*\
-  !*** ./server/controllers/gameController.js ***!
-  \**********************************************/
+/***/ "./server/controllers/lobbyController.js":
+/*!***********************************************!*\
+  !*** ./server/controllers/lobbyController.js ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ GameController)
+/* harmony export */   "default": () => (/* binding */ LobbyController)
 /* harmony export */ });
 /* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
 /* harmony import */ var _models_room__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/room */ "./server/models/room.js");
@@ -135,9 +135,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
  // one instance is made on server start up
 
-var GameController = /*#__PURE__*/function () {
-  function GameController() {
-    _classCallCheck(this, GameController);
+var LobbyController = /*#__PURE__*/function () {
+  function LobbyController() {
+    _classCallCheck(this, LobbyController);
 
     _defineProperty(this, "createRoom", function (io, playerId) {
       var newRoom = new _models_room__WEBPACK_IMPORTED_MODULE_1__.Room(playerId);
@@ -228,7 +228,7 @@ var GameController = /*#__PURE__*/function () {
     this.playersToRooms = new Map();
   }
 
-  _createClass(GameController, [{
+  _createClass(LobbyController, [{
     key: "checkRoomExists",
     value: function checkRoomExists(enteredCode) {
       return this.rooms.has(enteredCode);
@@ -273,7 +273,7 @@ var GameController = /*#__PURE__*/function () {
     }
   }]);
 
-  return GameController;
+  return LobbyController;
 }();
 
 
@@ -290,7 +290,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MainController)
 /* harmony export */ });
-/* harmony import */ var _gameController__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameController */ "./server/controllers/gameController.js");
+/* harmony import */ var _lobbyController__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lobbyController */ "./server/controllers/lobbyController.js");
 /* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -303,23 +303,23 @@ var MainController = function MainController(io) {
   _classCallCheck(this, MainController);
 
   this.io = io;
-  this.gamecontroller = new _gameController__WEBPACK_IMPORTED_MODULE_0__["default"]();
+  this.lobbyController = new _lobbyController__WEBPACK_IMPORTED_MODULE_0__["default"]();
   this.io.on("connection", function (socket) {
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioCreateRoom.type, function () {
-      socket.join(_this.gamecontroller.createRoom(_this.io, socket.id));
+      socket.join(_this.lobbyController.createRoom(_this.io, socket.id));
     });
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioEnterRoomCode.type, function (enteredRoomCode) {
-      _this.gamecontroller.joinRoom(enteredRoomCode, _this.io, socket);
+      _this.lobbyController.joinRoom(enteredRoomCode, _this.io, socket);
     });
     socket.on("disconnect", function () {
-      _this.gamecontroller.playerLeft(socket.id, _this.io);
+      _this.lobbyController.playerLeft(socket.id, _this.io);
     });
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.ioPlayerIsReady.type, function (payload) {
-      var updatedPlayers = _this.gamecontroller.updatePlayerReadiness(payload.playerId);
+      var updatedPlayers = _this.lobbyController.updatePlayerReadiness(payload.playerId);
 
-      _this.gamecontroller.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
+      _this.lobbyController.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
 
-      _this.gamecontroller.sendUpdatedPlayersToRoom(updatedPlayers, io, payload.roomCode);
+      _this.lobbyController.sendUpdatedPlayersToRoom(updatedPlayers, io, payload.roomCode);
     });
   });
 };
