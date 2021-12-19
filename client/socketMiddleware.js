@@ -4,7 +4,9 @@ import {
     ioEnterRoomCode,
     updatePlayers,
     updateSelf,
-    errorOccured
+    errorOccured,
+    navigateToGame,
+    updateGameState,
 } from './reducers'
 
 //A middleware to pass actions to the server 
@@ -26,6 +28,14 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
     socket.on(errorOccured.type,(payload)=>{
         dispatch(errorOccured(payload));
     });
+
+    socket.on(navigateToGame.type,(payload)=>{
+        dispatch(navigateToGame(payload));
+    })
+
+    socket.on(updateGameState.type,(payload)=>{
+        dispatch(updateGameState(payload));
+    })
 
     return action => {
         //actions from clients emit events

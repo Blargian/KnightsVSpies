@@ -80,4 +80,13 @@ describe('Lobby controller', ()=>{
         lobbyController.addPlayerToRoomMap(room,mockSocket.id);
         expect(lobbyController.updatePlayerReadiness(mockSocket.id)[0].readyToStart).toBeTruthy();
     });
+
+    test('getRoom() retrieves the room object given the roomId',()=>{
+        let room = new Room(mockSocket.id);
+        let roomCode = room.roomCode;
+        lobbyController = new LobbyController();
+        lobbyController.addToRoomMap(room);
+        lobbyController.addPlayerToRoomMap(room,mockSocket.id);
+        expect(lobbyController.getRoom(roomCode)).toEqual(room);
+    })
 })

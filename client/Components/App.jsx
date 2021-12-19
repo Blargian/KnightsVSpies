@@ -34,7 +34,7 @@ const App = (props) => {
         dispatch(ioEnterRoomCode(e.target.userInput.value))
     }
 
-    const appClass="mx-auto p-10 flex flex-col gap-10";
+    const appClass="mx-auto p-10 flex flex-col gap-10 bg-spy";
     const createButtonClass = 'text-black bg-white w-32 p-0.2';
     const enterInputClass = 'text-black w-24 p-1 bg-white ml-10 focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent';
     const enterButtonClass = 'text-white bg-blue ml-2 w-6';
