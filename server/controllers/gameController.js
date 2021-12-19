@@ -8,6 +8,7 @@ export default class GameController {
             spyPoints:0,
             knightPoints:0
         }
+        this.leader = '';
     }
 
     //selects 1/3 (rounded up) of players to be spies 
@@ -21,5 +22,10 @@ export default class GameController {
             playersArray.splice(randomIndex,1)
         }
         this.knights = playersArray; //assign the remaining knights
+    }
+
+    selectMissionLeader = function(){
+        let randomIndex = Math.ceil((Math.random()*this.players.length))-1;
+        this.leader = this.players[randomIndex].playerID;
     }
 }

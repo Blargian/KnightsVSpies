@@ -27,4 +27,12 @@ describe('Game controller',()=>{
         //for five players in a room, two should be spies
         expect(gameController.spies).toHaveLength(2);
     })
+
+    test('selectMissionLeader should randomly select a player to be the leader',()=>{
+        gameController.selectMissionLeader();
+        const numberOfMatches = testRoom.players.filter((player)=>{
+            return player.playerID === gameController.leader
+        }).length;
+        expect(numberOfMatches).toBe(1);
+    })
 })
