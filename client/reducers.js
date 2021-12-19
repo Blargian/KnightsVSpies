@@ -1,16 +1,14 @@
 import { configureStore, createSlice, combineReducers, PayloadAction} from "@reduxjs/toolkit";
 
-const initialState = {
-    game: {
-        missionLeader: false,
-        leaderSelection: [],
-        round: 0,
-        closeEyes: false,
-        spies: [],
-        knights: [],
-        votesPass: 0,
-        votesFail: 0,
-    }
+const initialGameState = {
+    players: [],
+    spies: [],
+    knights: [],
+    round: [
+
+    ],
+    leader: '',
+    showRoles: false,
 }
 
 const initialRoomState = {
@@ -19,6 +17,7 @@ const initialRoomState = {
     players: [],
     roomCode: '',
     error: null,
+    gameStarted:false,
 }
 
 const roomsSlice = createSlice({
@@ -48,16 +47,41 @@ const roomsSlice = createSlice({
             }
         },
         ioPlayerIsReady(state,{action,payload}){
+        },
+        ioStartGame(state){
+
+        },
+        navigateToGame(state){
+            return {
+                ...state,
+                gameStarted: true
+            }
         }
     }
 });
 
+const gameSlice = createSlice({
+    name:"game",
+    initialState:initialGameState,
+    reducers: {
+        updateGameState(state,{action,payload}){
+            return{
+                ...state,
+                ...payload
+            }
+        }
+    }
+}
+);
+
 //Root reducer for usage in the store
 export const rootReducer = combineReducers({
-    room: roomsSlice.reducer
+    room: roomsSlice.reducer,
+    game: gameSlice.reducer,
 });
 
 //Make action creators accesible 
+
 export const {
     ioCreateRoom,
     roomCreated,
@@ -67,5 +91,11 @@ export const {
     updateSelf,
     errorOccured,
     ioPlayerIsReady,
+    ioStartGame,
+    navigateToGame,
 } = roomsSlice.actions;
+
+export const {
+    updateGameState,
+} = gameSlice.actions;
 

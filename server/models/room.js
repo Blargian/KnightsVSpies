@@ -19,7 +19,7 @@ export class Room {
 
     addPlayer = function(callingPlayerId){
         this.players.push({
-            playerID:callingPlayerId,
+            playerId:callingPlayerId,
             selfAlias:`Player${this.players.length+1}`,
             readyToStart: false
         });

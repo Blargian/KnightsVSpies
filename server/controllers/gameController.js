@@ -1,31 +1,23 @@
+import {Game} from '../models/game'
+import {
+    navigateToGame,
+} from '../../client/reducers';
+import {
+    updateGameState
+} from '../../client/reducers';
+
 export default class GameController {
-    constructor(room){
-        this.players = room.players;
-        this.spies = [];
-        this.knights = [];
-        this.round = 0;
-        this.points = {
-            spyPoints:0,
-            knightPoints:0
-        }
-        this.leader = '';
+    constructor(io){
+        this.io = io;
+        this.games = new Map();
     }
 
-    //selects 1/3 (rounded up) of players to be spies 
-    selectRoles = function(){
-        let playersArray = this.players;
-        let randomIndex;
-        //assign the spies
-        while(this.spies.length<Math.ceil((this.players.length*0.33))){
-            let randomIndex = Math.ceil((Math.random()*playersArray.length))-1;
-            this.spies.push(playersArray[randomIndex])
-            playersArray.splice(randomIndex,1)
-        }
-        this.knights = playersArray; //assign the remaining knights
-    }
-
-    selectMissionLeader = function(){
-        let randomIndex = Math.ceil((Math.random()*this.players.length))-1;
-        this.leader = this.players[randomIndex].playerID;
-    }
+    createGame = function(room){
+        const game = new Game(room);
+        game.selectRoles();
+        game.selectMissionLeader();
+        this.games.set(room.roomCode,game)
+        this.io.in(room.roomCode).emit(navigateToGame.type);
+        this.io.in(room.roomCode).emit(updateGameState.type,game);
+    } 
 }

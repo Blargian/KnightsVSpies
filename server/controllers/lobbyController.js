@@ -105,21 +105,24 @@ export default class LobbyController{
         }
         let roomName = this.playersToRooms.get(playerId);
         let playerRoom = this.rooms.get(roomName);
-        let remainingPlayers = playerRoom.players.filter((player)=>{
-            return player.playerID !== playerId
-        });
-
-        playerRoom = {
-            ...playerRoom, 
-            players:remainingPlayers
+        if(playerRoom){
+            
+            let remainingPlayers = (playerRoom.players).filter((player)=>{
+                return player.playerId !== playerId
+            });
+    
+            playerRoom = {
+                ...playerRoom, 
+                players:remainingPlayers
+            }
+    
+            if(playerRoom.players.length===0){
+                this.rooms.delete(roomName);    
+            } else {
+                this.rooms.set(roomName,playerRoom);
+                io.in(roomName).emit(updatePlayers.type,remainingPlayers);
+            } 
         }
-
-        if(playerRoom.players.length===0){
-            this.rooms.delete(roomName);    
-        } else {
-            this.rooms.set(roomName,playerRoom);
-            io.in(roomName).emit(updatePlayers.type,remainingPlayers);
-        } 
     }
 
     roomIsFull = function(roomCode) {
@@ -131,7 +134,7 @@ export default class LobbyController{
     updatePlayerReadiness = function(callingPlayerId){
         const room = this.rooms.get(this.playersToRooms.get(callingPlayerId))
         const updatedPlayerArray = (room.players||[]).map((player)=>{
-            if(player.playerID === callingPlayerId){
+            if(player.playerId === callingPlayerId){
                 return {...player,readyToStart:!player.readyToStart}
             } else {
                 return player;
@@ -143,6 +146,11 @@ export default class LobbyController{
     sendUpdatedPlayersToRoom = function(updatedPlayers,io,enteredRoomCode){
         io.in(enteredRoomCode).emit(updatePlayers.type,updatedPlayers);
     }
+
+    getRoom = function(enteredRoomCode){
+        return this.rooms.get(enteredRoomCode);
+    }
+
 }
 
 
