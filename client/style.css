@@ -8,3 +8,13 @@
     background-size: contain;
     background-position: center;
 }
+
+@keyframes topfade {
+    from {opacity: 0%;}
+    to {opacity: 100%;}
+  }
+
+.animate-top-fade {
+    animation-name: topfade;
+    animation-duration: 4s;
+}

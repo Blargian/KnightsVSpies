@@ -15,7 +15,7 @@ export class Game {
 
     //selects 1/3 (rounded up) of players to be spies 
     selectRoles = function(){
-        let playersArray = this.players;
+        let playersArray = [...this.players];
         let randomIndex;
         //assign the spies
         while(this.spies.length<Math.ceil((this.players.length*0.33))){

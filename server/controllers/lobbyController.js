@@ -2,7 +2,8 @@ import {
     roomCreated,
     updatePlayers,
     updateSelf,
-    errorOccured
+    errorOccured,
+    returnAllRoomData
 } from '../../client/reducers';
 
 import { Room } from '../models/room';
@@ -11,20 +12,21 @@ import chalk from 'chalk';
 // one instance is made on server start up
 export default class LobbyController{
 
-    constructor(){
+    constructor(io){
+        this.io=io;
         this.rooms = new Map();
         this.playersToRooms = new Map();
     }
 
-    createRoom = function(io,playerId){
+    createRoom = function(playerId){
         const newRoom = new Room(playerId);
         this.addToRoomMap(newRoom);
         this.addPlayerToRoomMap(newRoom,playerId);
-        io.to(playerId).emit(roomCreated.type,this.formattedRoom(newRoom,playerId));
+        this.io.to(playerId).emit(roomCreated.type,this.formattedRoom(newRoom,playerId));
         return newRoom.roomCode
     }
 
-    joinRoom = function(enteredRoomCode,io,socket){
+    joinRoom = function(enteredRoomCode,socket){
         if(this.checkRoomExists(enteredRoomCode)){
             if(!this.roomIsFull(enteredRoomCode)){
                 socket.join(enteredRoomCode);
@@ -32,20 +34,20 @@ export default class LobbyController{
                 this.addPlayerToRoomMap(room,socket.id)
                 const players = this.addPlayerToRoom(enteredRoomCode,socket.id)
                 //update this players state 
-                io.to(socket.id).emit(updateSelf.type,this.formattedPlayer(enteredRoomCode,players,socket.id));
+                this.io.to(socket.id).emit(updateSelf.type,this.formattedPlayer(enteredRoomCode,players,socket.id));
                 //update all players state with the list of players
-                io.in(enteredRoomCode).emit(updatePlayers.type,players);
+                this.io.in(enteredRoomCode).emit(updatePlayers.type,players);
             } else {
-                io.to(socket.id).emit(errorOccured.type,'roomIsFull');
+                this.io.to(socket.id).emit(errorOccured.type,'roomIsFull');
             }
         } else{
             
         }          
     }
 
-    playerLeft = function(playerId,io){
+    playerLeft = function(playerId){
         try{
-            this.removePlayerFromRoom(playerId,io)
+            this.removePlayerFromRoom(playerId)
         } catch(error){
             console.log(chalk.red('an error occured trying to remove a player from their room'));
             console.log(error);
@@ -98,8 +100,8 @@ export default class LobbyController{
         }
     }
 
-    removePlayerFromRoom(playerId,io){
-        
+    removePlayerFromRoom(playerId){
+        console.log(chalk.yellow('Player was removed from the room'))
         if(this.playersToRooms.size===0 || this.playersToRooms.get(playerId) === undefined){
             return;
         }
@@ -120,7 +122,7 @@ export default class LobbyController{
                 this.rooms.delete(roomName);    
             } else {
                 this.rooms.set(roomName,playerRoom);
-                io.in(roomName).emit(updatePlayers.type,remainingPlayers);
+                this.io.in(roomName).emit(updatePlayers.type,remainingPlayers);
             } 
         }
     }
@@ -143,12 +145,17 @@ export default class LobbyController{
         return updatedPlayerArray
     }
 
-    sendUpdatedPlayersToRoom = function(updatedPlayers,io,enteredRoomCode){
-        io.in(enteredRoomCode).emit(updatePlayers.type,updatedPlayers);
+    sendUpdatedPlayersToRoom = function(updatedPlayers,enteredRoomCode){
+        this.io.in(enteredRoomCode).emit(updatePlayers.type,updatedPlayers);
     }
 
     getRoom = function(enteredRoomCode){
         return this.rooms.get(enteredRoomCode);
+    }
+
+    emitAllRoomData = function(enteredRoomCode, socketId){
+        //Problem here is that the socket id changes between refreshes
+        //Would have to implement a way to cache the player session
     }
 
 }
