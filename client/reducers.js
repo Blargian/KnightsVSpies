@@ -9,13 +9,14 @@ const initialGameState = {
     ],
     leader: '',
     showRoles: false,
+    allAcknowledged: false,
 }
 
 const initialRoomState = {
     selfId: '',
     selfAlias: '',
     players: [],
-    roomCode: '',
+    roomCode: null,
     error: null,
     gameStarted:false,
 }
@@ -56,6 +57,9 @@ const roomsSlice = createSlice({
                 ...state,
                 gameStarted: true
             }
+        },
+        returnAllRoomData(state,{action,payload}){
+            return {...state,...payload}
         }
     }
 });
@@ -69,6 +73,12 @@ const gameSlice = createSlice({
                 ...state,
                 ...payload
             }
+        },
+        ioGetAllData(state){
+        },
+        ioPlayerAcknowledged(state){},
+        allPlayersAcknowledged(state,{action,payload}){
+            return {...state,allAcknowledged:true,showRoles:false}
         }
     }
 }
@@ -93,9 +103,13 @@ export const {
     ioPlayerIsReady,
     ioStartGame,
     navigateToGame,
+    returnAllRoomData
 } = roomsSlice.actions;
 
 export const {
     updateGameState,
+    ioGetAllData,
+    ioPlayerAcknowledged,
+    allPlayersAcknowledged
 } = gameSlice.actions;
 
