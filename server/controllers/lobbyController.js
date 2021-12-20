@@ -101,7 +101,6 @@ export default class LobbyController{
     }
 
     removePlayerFromRoom(playerId){
-        console.log(chalk.yellow('Player was removed from the room'))
         if(this.playersToRooms.size===0 || this.playersToRooms.get(playerId) === undefined){
             return;
         }

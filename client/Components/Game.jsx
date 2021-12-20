@@ -3,14 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useSelector, useDispatch, connect} from 'react-redux'
-import {ioGetAllData} from '../reducers'
+import {ioGetAllData,ioPlayerAcknowledged} from '../reducers'
 import {useParams} from "react-router-dom";
 
 const Game = (props) => {
 
     const dispatch = useDispatch();
     let {roomCode} = useParams()
+
     const [isLoading,setIsLoading] = useState(false);
+    const [allAcknowledged,setAllAcknowledged] = useState(false)
     //Used for fetching data if the user renavigates to the route but no state data is present
     useEffect(() => {
         if(!props.roomCode){
@@ -33,8 +35,17 @@ const Game = (props) => {
         }
     },[props.otherSpies]);
 
-    const readyButtonClass = 'bg-blue text-white  w-36 p-2 rounded-lg hover:bg-lightblue transition duration-500 ease-in-out mt-4';
+    const acknowledgeRoleHandler = () =>{
+        if(!allAcknowledged){
+            setAllAcknowledged(true);
+            dispatch(ioPlayerAcknowledged(props.roomCode));
+        }
+    }
 
+    let acknowledgeButtonClass = readyButtonClass;
+    let readyButtonClass = 'bg-blue text-white  w-36 p-2 rounded-lg hover:bg-lightblue transition duration-500 ease-in-out mt-4';
+    let acceptedButtonClass = `bg-green text-white  w-36 p-2 rounded-lg hover:bg-lightgreen transition duration-500 ease-in-out mt-4`;
+    
     return(
         <div className={appClass}>
             {props.showRoles ? 
@@ -52,7 +63,7 @@ const Game = (props) => {
                         </div> : 
                         <h1 className="text-white text-center animate-top-fade">KNIGHT</h1>    
                     }
-                    <button className={readyButtonClass}>Let's go</button>
+                    <button className={allAcknowledged ? acceptedButtonClass : readyButtonClass} onClick={acknowledgeRoleHandler}>Let's go</button>
                 </div> : null
 
             }
@@ -61,6 +72,9 @@ const Game = (props) => {
             }
             {
                 isLoading ? <div className="flex flex-col justify-center items-center"><div className="text-white text-center animate-pulse">loading</div><FontAwesomeIcon icon={faSpinner} className='text-white text-6xl animate-spin'/></div> : null
+            }
+            {
+                props.allAcknowledged ? <div></div> : null
             }
         </div>
     )

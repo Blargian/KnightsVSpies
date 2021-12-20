@@ -9,6 +9,7 @@ const initialGameState = {
     ],
     leader: '',
     showRoles: false,
+    allAcknowledged: false,
 }
 
 const initialRoomState = {
@@ -75,6 +76,10 @@ const gameSlice = createSlice({
         },
         ioGetAllData(state){
         },
+        ioPlayerAcknowledged(state){},
+        allPlayersAcknowledged(state,{action,payload}){
+            return {...state,allAcknowledged:true,showRoles:false}
+        }
     }
 }
 );
@@ -104,5 +109,7 @@ export const {
 export const {
     updateGameState,
     ioGetAllData,
+    ioPlayerAcknowledged,
+    allPlayersAcknowledged
 } = gameSlice.actions;
 

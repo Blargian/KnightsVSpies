@@ -7,7 +7,10 @@ import {
     errorOccured,
     navigateToGame,
     updateGameState,
-} from './reducers'
+} from './reducers';
+import {
+    allPlayersAcknowledged
+} from './reducers';
 
 //A middleware to pass actions to the server 
 export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
@@ -35,6 +38,10 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
 
     socket.on(updateGameState.type,(payload)=>{
         dispatch(updateGameState(payload));
+    })
+
+    socket.on(allPlayersAcknowledged.type,(payload)=>{
+        dispatch(allPlayersAcknowledged(payload))
     })
 
     return action => {

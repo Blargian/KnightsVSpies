@@ -11,6 +11,7 @@ export class Game {
         ];
         this.leader = '';
         this.showRoles = true;
+        this.playersAcknowledgedRole = 0;
     }
 
     //selects 1/3 (rounded up) of players to be spies 

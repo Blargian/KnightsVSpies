@@ -7,7 +7,8 @@ import {
     ioEnterRoomCode,
     ioPlayerIsReady,
     ioStartGame,
-    errorOccured
+    errorOccured,
+    ioPlayerAcknowledged
 } from '../../client/reducers';
 import {
     ioGetAllData
@@ -56,6 +57,10 @@ export default class MainController {
                 } else {
                     io.to(socket.id).emit(errorOccured.type,'No Such Room Exists...');
                 }
+            })
+
+            socket.on(ioPlayerAcknowledged.type,(enteredRoomCode)=>{
+                this.gameController.checkAllPlayersAcknowledged(enteredRoomCode);
             })
         });
     }

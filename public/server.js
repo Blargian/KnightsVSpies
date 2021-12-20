@@ -23,7 +23,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "navigateToGame": () => (/* binding */ navigateToGame),
 /* harmony export */   "returnAllRoomData": () => (/* binding */ returnAllRoomData),
 /* harmony export */   "updateGameState": () => (/* binding */ updateGameState),
-/* harmony export */   "ioGetAllData": () => (/* binding */ ioGetAllData)
+/* harmony export */   "ioGetAllData": () => (/* binding */ ioGetAllData),
+/* harmony export */   "ioPlayerAcknowledged": () => (/* binding */ ioPlayerAcknowledged),
+/* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
@@ -40,7 +42,8 @@ var initialGameState = {
   knights: [],
   round: [],
   leader: '',
-  showRoles: false
+  showRoles: false,
+  allAcknowledged: false
 };
 var initialRoomState = {
   selfId: '',
@@ -109,7 +112,16 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
           payload = _ref8.payload;
       return _objectSpread(_objectSpread({}, state), payload);
     },
-    ioGetAllData: function ioGetAllData(state) {}
+    ioGetAllData: function ioGetAllData(state) {},
+    ioPlayerAcknowledged: function ioPlayerAcknowledged(state) {},
+    allPlayersAcknowledged: function allPlayersAcknowledged(state, _ref9) {
+      var action = _ref9.action,
+          payload = _ref9.payload;
+      return _objectSpread(_objectSpread({}, state), {}, {
+        allAcknowledged: true,
+        showRoles: false
+      });
+    }
   }
 }); //Root reducer for usage in the store
 
@@ -133,7 +145,9 @@ var _roomsSlice$actions = roomsSlice.actions,
 
 var _gameSlice$actions = gameSlice.actions,
     updateGameState = _gameSlice$actions.updateGameState,
-    ioGetAllData = _gameSlice$actions.ioGetAllData;
+    ioGetAllData = _gameSlice$actions.ioGetAllData,
+    ioPlayerAcknowledged = _gameSlice$actions.ioPlayerAcknowledged,
+    allPlayersAcknowledged = _gameSlice$actions.allPlayersAcknowledged;
 
 
 /***/ }),
@@ -150,9 +164,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _models_game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/game */ "./server/models/game.js");
 /* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
+/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! socket.io-client */ "socket.io-client");
+/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_2__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -168,6 +185,16 @@ var GameController = function GameController(io) {
     this.games.set(room.roomCode, game);
     this.io["in"](room.roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.navigateToGame.type);
     this.io["in"](room.roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.updateGameState.type, game);
+  });
+
+  _defineProperty(this, "checkAllPlayersAcknowledged", function (roomCode) {
+    var game = this.games.get(roomCode);
+    game.playersAcknowledgedRole++;
+    this.games.set(roomCode, game);
+
+    if (game.playersAcknowledgedRole === game.players.length) {
+      this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.allPlayersAcknowledged.type);
+    }
   });
 
   this.io = io;
@@ -333,8 +360,6 @@ var LobbyController = /*#__PURE__*/function () {
   }, {
     key: "removePlayerFromRoom",
     value: function removePlayerFromRoom(playerId) {
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().yellow('Player was removed from the room'));
-
       if (this.playersToRooms.size === 0 || this.playersToRooms.get(playerId) === undefined) {
         return;
       }
@@ -432,6 +457,9 @@ var MainController = function MainController(io) {
         io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.errorOccured.type, 'No Such Room Exists...');
       }
     });
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerAcknowledged.type, function (enteredRoomCode) {
+      _this.gameController.checkAllPlayersAcknowledged(enteredRoomCode);
+    });
   });
 };
 
@@ -498,6 +526,7 @@ var Game = function Game(room) {
   this.round = [_models_round__WEBPACK_IMPORTED_MODULE_0__.round];
   this.leader = '';
   this.showRoles = true;
+  this.playersAcknowledgedRole = 0;
 } //selects 1/3 (rounded up) of players to be spies 
 ;
 
