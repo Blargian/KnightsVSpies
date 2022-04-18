@@ -9,7 +9,8 @@ import {
     updateGameState,
 } from './reducers';
 import {
-    allPlayersAcknowledged
+    allPlayersAcknowledged,
+    updateSelectedPlayers
 } from './reducers';
 
 //A middleware to pass actions to the server 
@@ -42,6 +43,10 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
 
     socket.on(allPlayersAcknowledged.type,(payload)=>{
         dispatch(allPlayersAcknowledged(payload))
+    })
+
+    socket.on(updateSelectedPlayers.type,(payload)=>{
+        dispatch(updateSelectedPlayers(payload))
     })
 
     return action => {

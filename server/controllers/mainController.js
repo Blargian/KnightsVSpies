@@ -8,7 +8,8 @@ import {
     ioPlayerIsReady,
     ioStartGame,
     errorOccured,
-    ioPlayerAcknowledged
+    ioPlayerAcknowledged,
+    ioUpdateSelectedPlayers
 } from '../../client/reducers';
 import {
     ioGetAllData
@@ -61,6 +62,10 @@ export default class MainController {
 
             socket.on(ioPlayerAcknowledged.type,(enteredRoomCode)=>{
                 this.gameController.checkAllPlayersAcknowledged(enteredRoomCode);
+            })
+
+            socket.on(ioUpdateSelectedPlayers.type,(payload)=>{
+                this.gameController.sendSelectedPlayersToRoom(payload.roomCode,payload.newSelectedPlayers)
             })
         });
     }

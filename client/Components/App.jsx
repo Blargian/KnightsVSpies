@@ -4,7 +4,8 @@ import { useSelector, useDispatch, connect} from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-
+import { MissionSelector } from './MissionSelector';
+import {playersMock,mockLeader} from '../Tests/mock';
 
 const App = (props) => {
 

@@ -25,7 +25,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "updateGameState": () => (/* binding */ updateGameState),
 /* harmony export */   "ioGetAllData": () => (/* binding */ ioGetAllData),
 /* harmony export */   "ioPlayerAcknowledged": () => (/* binding */ ioPlayerAcknowledged),
-/* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged)
+/* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged),
+/* harmony export */   "ioUpdateSelectedPlayers": () => (/* binding */ ioUpdateSelectedPlayers),
+/* harmony export */   "updateSelectedPlayers": () => (/* binding */ updateSelectedPlayers)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
@@ -43,7 +45,8 @@ var initialGameState = {
   round: [],
   leader: '',
   showRoles: false,
-  allAcknowledged: false
+  allAcknowledged: false,
+  selectedPlayers: []
 };
 var initialRoomState = {
   selfId: '',
@@ -121,6 +124,18 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
         allAcknowledged: true,
         showRoles: false
       });
+    },
+    ioUpdateSelectedPlayers: function ioUpdateSelectedPlayers(state, _ref10) {
+      var action = _ref10.action,
+          payload = _ref10.payload;
+    },
+    updateSelectedPlayers: function updateSelectedPlayers(state, _ref11) {
+      var action = _ref11.action,
+          payload = _ref11.payload;
+      console.log('updateSelectedPlayers:' + payload);
+      return _objectSpread(_objectSpread({}, state), {}, {
+        selectedPlayers: payload
+      });
     }
   }
 }); //Root reducer for usage in the store
@@ -147,7 +162,9 @@ var _gameSlice$actions = gameSlice.actions,
     updateGameState = _gameSlice$actions.updateGameState,
     ioGetAllData = _gameSlice$actions.ioGetAllData,
     ioPlayerAcknowledged = _gameSlice$actions.ioPlayerAcknowledged,
-    allPlayersAcknowledged = _gameSlice$actions.allPlayersAcknowledged;
+    allPlayersAcknowledged = _gameSlice$actions.allPlayersAcknowledged,
+    ioUpdateSelectedPlayers = _gameSlice$actions.ioUpdateSelectedPlayers,
+    updateSelectedPlayers = _gameSlice$actions.updateSelectedPlayers;
 
 
 /***/ }),
@@ -195,6 +212,10 @@ var GameController = function GameController(io) {
     if (game.playersAcknowledgedRole === game.players.length) {
       this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.allPlayersAcknowledged.type);
     }
+  });
+
+  _defineProperty(this, "sendSelectedPlayersToRoom", function (roomCode, selectedPlayers) {
+    this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.updateSelectedPlayers.type, selectedPlayers);
   });
 
   this.io = io;
@@ -459,6 +480,9 @@ var MainController = function MainController(io) {
     });
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerAcknowledged.type, function (enteredRoomCode) {
       _this.gameController.checkAllPlayersAcknowledged(enteredRoomCode);
+    });
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioUpdateSelectedPlayers.type, function (payload) {
+      _this.gameController.sendSelectedPlayersToRoom(payload.roomCode, payload.newSelectedPlayers);
     });
   });
 };

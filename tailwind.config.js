@@ -2,8 +2,8 @@ module.exports = {
   content: [
     './public/index.html',
   ],
-  purge: ['./public/*.html'],
-  darkMode: false, // or 'media' or 'class'
+  purge: ['./public/*.html',"./client/Components/*.{js,jsx}","./client/*.js"],
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
       colors:{
@@ -13,6 +13,8 @@ module.exports = {
         lightblue: '#5C9AF6',
         green: '#11CD01',
         lightgreen: '#15FF01',
+        sky400: '#38bdf8',
+        amber: '#fbbf24'
       },
     },
   },

@@ -4,7 +4,8 @@ import {
 } from '../../client/reducers';
 import {
     updateGameState,
-    allPlayersAcknowledged
+    allPlayersAcknowledged,
+    updateSelectedPlayers
 } from '../../client/reducers';
 import { io } from 'socket.io-client';
 
@@ -30,5 +31,9 @@ export default class GameController {
         if(game.playersAcknowledgedRole === game.players.length){
             this.io.in(roomCode).emit(allPlayersAcknowledged.type,)
         }
+    }
+
+    sendSelectedPlayersToRoom = function(roomCode, selectedPlayers){
+        this.io.in(roomCode).emit(updateSelectedPlayers.type,selectedPlayers);
     }
 }

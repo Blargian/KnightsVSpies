@@ -1,9 +1,10 @@
 import React,{useState,useEffect} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import MissionSelector from './MissionSelector';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import { useSelector, useDispatch, connect} from 'react-redux'
-import {ioGetAllData,ioPlayerAcknowledged} from '../reducers'
+import { useSelector, useDispatch, connect} from 'react-redux';
+import {ioGetAllData,ioPlayerAcknowledged} from '../reducers';
 import {useParams} from "react-router-dom";
 
 const Game = (props) => {
@@ -74,7 +75,15 @@ const Game = (props) => {
                 isLoading ? <div className="flex flex-col justify-center items-center"><div className="text-white text-center animate-pulse">loading</div><FontAwesomeIcon icon={faSpinner} className='text-white text-6xl animate-spin'/></div> : null
             }
             {
-                props.allAcknowledged ? <div></div> : null
+                props.allAcknowledged ? <div>
+                    <MissionSelector 
+                        selfId = {props.selfId}
+                        players={props.players}
+                        selectedPlayers={props.selectedPlayers}  
+                        missionLeader={props.leader}
+                        currentRound={0}
+                    />
+                </div> : null
             }
         </div>
     )
