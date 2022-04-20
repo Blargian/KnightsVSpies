@@ -4,14 +4,17 @@ import { Room } from './room';
 export class Game {
     constructor(room){
         this.players = room.players;
+        this.numberOfPlayers = this.players.length;
         this.spies = [];
         this.knights = [];
-        this.round = [
+        this.rounds = [
             firstRound
         ];
         this.leader = '';
         this.showRoles = true;
         this.playersAcknowledgedRole = 0;
+        this.castToVote = false;
+        this.currentRound = 0;
     }
 
     //selects 1/3 (rounded up) of players to be spies 

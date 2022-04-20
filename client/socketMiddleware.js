@@ -10,7 +10,9 @@ import {
 } from './reducers';
 import {
     allPlayersAcknowledged,
-    updateSelectedPlayers
+    updateSelectedPlayers,
+    updateCastToVote,
+    updateAllowToVote,
 } from './reducers';
 
 //A middleware to pass actions to the server 
@@ -48,6 +50,15 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
     socket.on(updateSelectedPlayers.type,(payload)=>{
         dispatch(updateSelectedPlayers(payload))
     })
+
+    socket.on(updateCastToVote.type,(payload)=>{
+        dispatch(updateCastToVote(payload))
+    })
+
+    socket.on(updateAllowToVote.type,(payload)=>{
+        dispatch(updateAllowToVote(payload))
+    })
+    
 
     return action => {
         //actions from clients emit events

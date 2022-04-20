@@ -11,6 +11,9 @@ const initialGameState = {
     showRoles: false,
     allAcknowledged: false,
     selectedPlayers: [],
+    currentRound: 0,
+    castToVote: false,
+    allowToVote: true,
 }
 
 const initialRoomState = {
@@ -61,7 +64,7 @@ const roomsSlice = createSlice({
         },
         returnAllRoomData(state,{action,payload}){
             return {...state,...payload}
-        }
+        },
     }
 });
 
@@ -84,8 +87,15 @@ const gameSlice = createSlice({
         ioUpdateSelectedPlayers(state,{action,payload}){
         },
         updateSelectedPlayers(state,{action,payload}){
-            console.log('updateSelectedPlayers:' + payload)
             return {...state,selectedPlayers:payload}
+        },
+        ioCastToVote(state,{action,payload}){},
+        updateCastToVote(state,{action,payload}){
+            return {...state,castToVote:payload}
+        },
+        ioPlayerCastVote(state,{action,payload}){},
+        updateAllowToVote(state,{action,payload}){
+            return {...state,allowToVote:payload}
         }
     }
 }
@@ -119,6 +129,10 @@ export const {
     ioPlayerAcknowledged,
     allPlayersAcknowledged,
     ioUpdateSelectedPlayers,
-    updateSelectedPlayers
+    updateSelectedPlayers,
+    ioCastToVote,
+    updateCastToVote,
+    ioPlayerCastVote,
+    updateAllowToVote
 } = gameSlice.actions;
 

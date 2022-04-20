@@ -27,7 +27,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ioPlayerAcknowledged": () => (/* binding */ ioPlayerAcknowledged),
 /* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged),
 /* harmony export */   "ioUpdateSelectedPlayers": () => (/* binding */ ioUpdateSelectedPlayers),
-/* harmony export */   "updateSelectedPlayers": () => (/* binding */ updateSelectedPlayers)
+/* harmony export */   "updateSelectedPlayers": () => (/* binding */ updateSelectedPlayers),
+/* harmony export */   "ioCastToVote": () => (/* binding */ ioCastToVote),
+/* harmony export */   "updateCastToVote": () => (/* binding */ updateCastToVote),
+/* harmony export */   "ioPlayerCastVote": () => (/* binding */ ioPlayerCastVote),
+/* harmony export */   "updateAllowToVote": () => (/* binding */ updateAllowToVote)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
@@ -46,7 +50,10 @@ var initialGameState = {
   leader: '',
   showRoles: false,
   allAcknowledged: false,
-  selectedPlayers: []
+  selectedPlayers: [],
+  currentRound: 0,
+  castToVote: false,
+  allowToVote: true
 };
 var initialRoomState = {
   selfId: '',
@@ -132,9 +139,30 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
     updateSelectedPlayers: function updateSelectedPlayers(state, _ref11) {
       var action = _ref11.action,
           payload = _ref11.payload;
-      console.log('updateSelectedPlayers:' + payload);
       return _objectSpread(_objectSpread({}, state), {}, {
         selectedPlayers: payload
+      });
+    },
+    ioCastToVote: function ioCastToVote(state, _ref12) {
+      var action = _ref12.action,
+          payload = _ref12.payload;
+    },
+    updateCastToVote: function updateCastToVote(state, _ref13) {
+      var action = _ref13.action,
+          payload = _ref13.payload;
+      return _objectSpread(_objectSpread({}, state), {}, {
+        castToVote: payload
+      });
+    },
+    ioPlayerCastVote: function ioPlayerCastVote(state, _ref14) {
+      var action = _ref14.action,
+          payload = _ref14.payload;
+    },
+    updateAllowToVote: function updateAllowToVote(state, _ref15) {
+      var action = _ref15.action,
+          payload = _ref15.payload;
+      return _objectSpread(_objectSpread({}, state), {}, {
+        allowToVote: payload
       });
     }
   }
@@ -164,7 +192,11 @@ var _gameSlice$actions = gameSlice.actions,
     ioPlayerAcknowledged = _gameSlice$actions.ioPlayerAcknowledged,
     allPlayersAcknowledged = _gameSlice$actions.allPlayersAcknowledged,
     ioUpdateSelectedPlayers = _gameSlice$actions.ioUpdateSelectedPlayers,
-    updateSelectedPlayers = _gameSlice$actions.updateSelectedPlayers;
+    updateSelectedPlayers = _gameSlice$actions.updateSelectedPlayers,
+    ioCastToVote = _gameSlice$actions.ioCastToVote,
+    updateCastToVote = _gameSlice$actions.updateCastToVote,
+    ioPlayerCastVote = _gameSlice$actions.ioPlayerCastVote,
+    updateAllowToVote = _gameSlice$actions.updateAllowToVote;
 
 
 /***/ }),
@@ -216,6 +248,36 @@ var GameController = function GameController(io) {
 
   _defineProperty(this, "sendSelectedPlayersToRoom", function (roomCode, selectedPlayers) {
     this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.updateSelectedPlayers.type, selectedPlayers);
+  });
+
+  _defineProperty(this, "updateCastToVote", function (roomCode, castToVote) {
+    console.log(roomCode, castToVote);
+    this.castToVote = castToVote;
+    this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.updateCastToVote.type, castToVote);
+  });
+
+  _defineProperty(this, "updatePlayerVote", function (roomCode, selfId, missionPass) {
+    var game = this.games.get(roomCode);
+    missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
+    console.log(" Number of pass: ".concat(game.rounds[game.currentRound].numberOfPass));
+    console.log(" Number of fail: ".concat(game.rounds[game.currentRound].numberOfFail));
+    this.games.set(roomCode, game);
+    this.io.to(selfId).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.updateAllowToVote.type, false);
+  });
+
+  _defineProperty(this, "checkAllPlayersVoted", function (roomCode) {
+    var game = this.games.get(roomCode);
+    var currentRound = game.rounds[game.currentRound];
+
+    if (currentRound.numberOfFail + currentRound.numberOfPass === game.numberOfPlayers) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  _defineProperty(this, "transitionRound", function () {
+    console.log('transitioning round');
   });
 
   this.io = io;
@@ -433,7 +495,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-
  //Handles socket 
 
 var MainController = function MainController(io) {
@@ -483,6 +544,14 @@ var MainController = function MainController(io) {
     });
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioUpdateSelectedPlayers.type, function (payload) {
       _this.gameController.sendSelectedPlayersToRoom(payload.roomCode, payload.newSelectedPlayers);
+    });
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioCastToVote.type, function (payload) {
+      _this.gameController.updateCastToVote(payload.roomCode, payload.castToVote);
+    });
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerCastVote.type, function (payload) {
+      _this.gameController.updatePlayerVote(payload.roomCode, payload.selfId, payload.missionPass);
+
+      _this.gameController.checkAllPlayersVoted(payload.roomCode) ? _this.gameController.transitionRound() : function () {};
     });
   });
 };
@@ -545,12 +614,15 @@ var Game = function Game(room) {
   });
 
   this.players = room.players;
+  this.numberOfPlayers = this.players.length;
   this.spies = [];
   this.knights = [];
-  this.round = [_models_round__WEBPACK_IMPORTED_MODULE_0__.round];
+  this.rounds = [_models_round__WEBPACK_IMPORTED_MODULE_0__.round];
   this.leader = '';
   this.showRoles = true;
   this.playersAcknowledgedRole = 0;
+  this.castToVote = false;
+  this.currentRound = 0;
 } //selects 1/3 (rounded up) of players to be spies 
 ;
 
@@ -619,6 +691,8 @@ __webpack_require__.r(__webpack_exports__);
 var round = {
   round: 0,
   playersOnMission: [],
+  numberOfPass: 0,
+  numberOfFail: 0,
   winner: ''
 };
 

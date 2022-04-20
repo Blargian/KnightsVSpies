@@ -9,11 +9,11 @@ import {
     ioStartGame,
     errorOccured,
     ioPlayerAcknowledged,
-    ioUpdateSelectedPlayers
+    ioUpdateSelectedPlayers,
+    ioGetAllData,
+    ioCastToVote,
+    ioPlayerCastVote
 } from '../../client/reducers';
-import {
-    ioGetAllData
-} from '../../client/reducers'
 
 //Handles socket 
 export default class MainController {
@@ -66,6 +66,15 @@ export default class MainController {
 
             socket.on(ioUpdateSelectedPlayers.type,(payload)=>{
                 this.gameController.sendSelectedPlayersToRoom(payload.roomCode,payload.newSelectedPlayers)
+            })
+
+            socket.on(ioCastToVote.type,(payload)=>{
+                this.gameController.updateCastToVote(payload.roomCode,payload.castToVote)
+            })
+
+            socket.on(ioPlayerCastVote.type,(payload)=>{
+                this.gameController.updatePlayerVote(payload.roomCode,payload.selfId,payload.missionPass);
+                this.gameController.checkAllPlayersVoted(payload.roomCode) ? this.gameController.transitionRound() : ()=>{}
             })
         });
     }

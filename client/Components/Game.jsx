@@ -81,7 +81,9 @@ const Game = (props) => {
                         players={props.players}
                         selectedPlayers={props.selectedPlayers}  
                         missionLeader={props.leader}
-                        currentRound={0}
+                        currentRound={props.currentRound}
+                        castToVote={props.castToVote}
+                        allowToVote={props.allowToVote}
                     />
                 </div> : null
             }
