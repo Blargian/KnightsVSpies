@@ -261,6 +261,7 @@ var GameController = function GameController(io) {
     missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
     console.log(" Number of pass: ".concat(game.rounds[game.currentRound].numberOfPass));
     console.log(" Number of fail: ".concat(game.rounds[game.currentRound].numberOfFail));
+    game.rounds[game.currentRound].playersOnMission.push(selfId);
     this.games.set(roomCode, game);
     this.io.to(selfId).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_1__.updateAllowToVote.type, false);
   });
@@ -268,11 +269,28 @@ var GameController = function GameController(io) {
   _defineProperty(this, "checkAllPlayersVoted", function (roomCode) {
     var game = this.games.get(roomCode);
     var currentRound = game.rounds[game.currentRound];
+    console.log(currentRound.numberOfFail);
+    console.log(game.players);
 
-    if (currentRound.numberOfFail + currentRound.numberOfPass === game.numberOfPlayers) {
+    if (currentRound.numberOfFail + currentRound.numberOfPass === game.missionRules[game.players.length - 5][game.currentRound]) {
       return true;
     } else {
       return false;
+    }
+  });
+
+  _defineProperty(this, "checkIfKnightsWin", function (roomCode) {
+    var game = this.games.get(roomCode);
+    var currentRound = game.rounds[game.currentRound]; //if mission fails then spies won
+
+    if (currentRound.numberOfFail > 1) {
+      currentRound.knightsWon = true;
+      console.log('Spies won');
+      return false; //if mission passes then knights won
+    } else if (currentRound.numberOfPass === currentRound.playersOnMission.length) {
+      currentRound.knightsWon = true;
+      console.log('Knights won');
+      return true;
     }
   });
 
@@ -623,6 +641,13 @@ var Game = function Game(room) {
   this.playersAcknowledgedRole = 0;
   this.castToVote = false;
   this.currentRound = 0;
+  this.missionRules = [[2, 3, 2, 3, 3], //5 players
+  [2, 3, 4, 3, 4], //6 players
+  [2, 3, 3, 4, 4], //7 players
+  [3, 4, 4, 5, 5], //8 players
+  [3, 4, 4, 5, 5], //9 players
+  [3, 4, 4, 5, 5] //10 players
+  ];
 } //selects 1/3 (rounded up) of players to be spies 
 ;
 
@@ -693,7 +718,7 @@ var round = {
   playersOnMission: [],
   numberOfPass: 0,
   numberOfFail: 0,
-  winner: ''
+  knightsWon: null
 };
 
 /***/ }),

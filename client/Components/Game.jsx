@@ -84,6 +84,7 @@ const Game = (props) => {
                         currentRound={props.currentRound}
                         castToVote={props.castToVote}
                         allowToVote={props.allowToVote}
+                        spyIds={props.spyIds}
                     />
                 </div> : null
             }
@@ -96,6 +97,10 @@ const mapStateToProps = (state) => {
 const isSpy = state.game.spies.filter((spy)=>{
     return spy.playerId === state.room.selfId; 
 }).length ? true : false;
+
+const spyIds = state.game.spies.map((spy)=>{
+    return spy.playerId
+})
 
 let selfAlias = state.room.players.filter((player)=>{
     return player.playerId === state.room.selfId; 
@@ -119,7 +124,8 @@ return {
     selfAlias,
     ...state.game,
     isSpy,
-    otherSpies
+    otherSpies,
+    spyIds
 }
 
 };

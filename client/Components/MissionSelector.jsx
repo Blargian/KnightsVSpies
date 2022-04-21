@@ -5,7 +5,7 @@ import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote} from '../reducers';
 
-const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, currentRound, selfId, castToVote,allowToVote}) =>{
+const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, currentRound, selfId, castToVote,allowToVote, spyIds}) =>{
 
     const dispatch = useDispatch();
     const missionRules = [
@@ -49,9 +49,7 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
         if(selectedPlayers.length === maxPlayersInRound){
             //send a message to the server to say that it's ready to get votes
             dispatch(ioCastToVote({roomCode:roomCode,castToVote:true}));
-            dispatch(ioPlayerCastVote({roomCode,selfId,missionPass:true}));
         }
-       
     }
 
     const playerDivs = players.map((player)=>{
@@ -76,18 +74,30 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
     
     return(
-        <div className={MissionSelectorClass}>
+        <div>
+            <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
+            <div className={MissionSelectorClass}>
             {playerDivs}
             {selfId===missionLeader 
                 ? <div>
                     {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
                     <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable} >Cast to vote</button>    
-                </div> 
-                :<div>
+                </div> :null}
+                {selectedPlayers.includes(selfId)?
+                <div>
+                    {spyIds.includes(selfId) && castToVote ? 
+                    <div>
+                        <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Accept</button>
+                        <button onClick={()=>{voteHandler(false)}} className={castToVote && allowToVote ? failMissionButton : failMissionButtonDisable}>Veto</button>
+                    </div> : null
+                    }
+                    {!spyIds.includes(selfId) && castToVote ?
                     <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Accept</button>
-                    <button onClick={()=>{voteHandler(false)}} className={castToVote && allowToVote ? failMissionButton : failMissionButtonDisable}>Veto</button>
-                 </div>
-            }
+                    : null
+                    }
+                </div> : null
+                }
+        </div>
         </div>
     )
 }

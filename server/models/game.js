@@ -15,6 +15,14 @@ export class Game {
         this.playersAcknowledgedRole = 0;
         this.castToVote = false;
         this.currentRound = 0;
+        this.missionRules = [
+            [2,3,2,3,3], //5 players
+            [2,3,4,3,4], //6 players
+            [2,3,3,4,4], //7 players
+            [3,4,4,5,5], //8 players
+            [3,4,4,5,5], //9 players
+            [3,4,4,5,5] //10 players
+        ]
     }
 
     //selects 1/3 (rounded up) of players to be spies 

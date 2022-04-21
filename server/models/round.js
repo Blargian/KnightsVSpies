@@ -3,5 +3,5 @@ export const round = {
     playersOnMission: [],
     numberOfPass: 0,
     numberOfFail: 0,
-    winner: ''
+    knightsWon: null
 }
