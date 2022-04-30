@@ -3,14 +3,16 @@ import { Room } from './room';
 
 export class Game {
     constructor(room){
-        this.players = room.players;
+        this.roomCode = room.roomCode;
+        this.players = [...room.players];
         this.numberOfPlayers = this.players.length;
-        this.spies = [];
-        this.knights = [];
+        let selectedRoles = this.selectRoles(this.players)
+        this.spies = selectedRoles.spies;
+        this.knights = selectedRoles.knights;
         this.rounds = [
             firstRound
         ];
-        this.leader = '';
+        this.leader = this.selectMissionLeader(this.players);
         this.showRoles = true;
         this.playersAcknowledgedRole = 0;
         this.castToVote = false;
@@ -26,20 +28,23 @@ export class Game {
     }
 
     //selects 1/3 (rounded up) of players to be spies 
-    selectRoles = function(){
-        let playersArray = [...this.players];
-        let randomIndex;
+    selectRoles = function(players){
+        let playersArray = [...players];
+        let spies = []
+        let knights = []
         //assign the spies
-        while(this.spies.length<Math.ceil((this.players.length*0.33))){
+        while(spies.length<Math.ceil((players.length*0.33))){
             let randomIndex = Math.ceil((Math.random()*playersArray.length))-1;
-            this.spies.push(playersArray[randomIndex])
+            spies.push(playersArray[randomIndex])
             playersArray.splice(randomIndex,1)
         }
-        this.knights = playersArray; //assign the remaining knights
+        knights = playersArray; //assign the remaining knights
+
+        return {spies, knights};
     }
 
-    selectMissionLeader = function(){
-        let randomIndex = Math.ceil((Math.random()*this.players.length))-1;
-        this.leader = this.players[randomIndex].playerId;
+    selectMissionLeader = function(players){
+        let randomIndex = Math.ceil((Math.random()*players.length))-1;
+        return players[randomIndex].playerId;
     }
 }

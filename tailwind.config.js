@@ -16,6 +16,15 @@ module.exports = {
         sky400: '#38bdf8',
         amber: '#fbbf24'
       },
+      animation:{
+        'fadein': 'fade 10s'
+      },
+      keyframes: {
+        fade: {
+          '0%': {opacity:'0'},
+          '100%':{opacity:'1'}
+        }
+      },
     },
   },
   variants: {

@@ -286,16 +286,21 @@ var GameController = function GameController(io) {
     if (currentRound.numberOfFail > 1) {
       currentRound.knightsWon = true;
       console.log('Spies won');
+      this.games.set(roomCode, game);
       return false; //if mission passes then knights won
     } else if (currentRound.numberOfPass === currentRound.playersOnMission.length) {
       currentRound.knightsWon = true;
+      this.games.set(roomCode, game);
       console.log('Knights won');
       return true;
     }
   });
 
-  _defineProperty(this, "transitionRound", function () {
-    console.log('transitioning round');
+  _defineProperty(this, "transitionRound", function (roomCode) {
+    var knightsWon = this.checkIfKnightsWin(roomCode);
+    console.log("KnightsWon: ".concat(knightsWon));
+    console.log('transitioning round'); //store the winner 
+    //send something back to the front-end to show the winner 
   });
 
   this.io = io;
@@ -569,7 +574,7 @@ var MainController = function MainController(io) {
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerCastVote.type, function (payload) {
       _this.gameController.updatePlayerVote(payload.roomCode, payload.selfId, payload.missionPass);
 
-      _this.gameController.checkAllPlayersVoted(payload.roomCode) ? _this.gameController.transitionRound() : function () {};
+      _this.gameController.checkAllPlayersVoted(payload.roomCode) ? _this.gameController.transitionRound(payload.roomCode) : function () {};
     });
   });
 };

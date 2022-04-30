@@ -19,20 +19,17 @@ export default class GameController {
 
     createGame = function(room){
         const game = new Game(room);
-        game.selectRoles();
-        game.selectMissionLeader();
         this.games.set(room.roomCode,game)
-        this.io.in(room.roomCode).emit(navigateToGame.type);
-        this.io.in(room.roomCode).emit(updateGameState.type,game);
+        return game;
     } 
 
     checkAllPlayersAcknowledged = function(roomCode){
         const game = this.games.get(roomCode);
         game.playersAcknowledgedRole++;
-        this.games.set(roomCode,game);
         if(game.playersAcknowledgedRole === game.players.length){
             this.io.in(roomCode).emit(allPlayersAcknowledged.type,)
         }
+        return game;
     }
 
     sendSelectedPlayersToRoom = function(roomCode, selectedPlayers){
@@ -40,26 +37,28 @@ export default class GameController {
     }
 
     updateCastToVote = function(roomCode, castToVote){
-        console.log(roomCode, castToVote)
         this.castToVote = castToVote;
         this.io.in(roomCode).emit(updateCastToVote.type,castToVote);
     }
 
-    updatePlayerVote = function(roomCode,selfId,missionPass){
-        const game = this.games.get(roomCode);
+    getGameFromRoomcode = function(roomCode){
+        return this.games.get(roomCode);
+    }
+
+    setGameWithRoomcode = function(roomCode,game){
+        this.games.set(roomCode,game)
+    }
+
+    updatePlayerVote = function(gameToUpdate,selfId,missionPass){
+        let game = gameToUpdate;
         missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
-        console.log(` Number of pass: ${game.rounds[game.currentRound].numberOfPass}`)
-        console.log(` Number of fail: ${game.rounds[game.currentRound].numberOfFail}`)
         game.rounds[game.currentRound].playersOnMission.push(selfId);
-        this.games.set(roomCode,game);
-        this.io.to(selfId).emit(updateAllowToVote.type,false)
+        return game;
     }
 
     checkAllPlayersVoted = function(roomCode){
-        const game = this.games.get(roomCode)
+        const game = getGameFromRoomcode(roomCode)
         const currentRound = game.rounds[game.currentRound]
-        console.log(currentRound.numberOfFail)
-        console.log(game.players)
         if((currentRound.numberOfFail + currentRound.numberOfPass) === game.missionRules[game.players.length-5][game.currentRound]){
             return true;
         } else {
@@ -68,22 +67,38 @@ export default class GameController {
     }
 
     checkIfKnightsWin = function(roomCode){
-        const game = this.games.get(roomCode)
-        const currentRound = game.rounds[game.currentRound]
+        let game = this.games.get(roomCode)
+        let currentRound = game.rounds[game.currentRound]
         //if mission fails then spies won
-        if(currentRound.numberOfFail>1){
-            currentRound.knightsWon = true;
-            console.log('Spies won')
+        if(currentRound.numberOfFail>=1 && game.players.length<7){
+            game.rounds[game.currentRound].knightsWon = false;
+            this.games.set(roomCode,game)
             return false;
-        //if mission passes then knights won
-        } else if (currentRound.numberOfPass === currentRound.playersOnMission.length){
-            currentRound.knightsWon = true;
-            console.log('Knights won')
+        } else if (currentRound.numberOfFail>=2 && game.players.length >= 7 ){
+            game.rounds[game.currentRound].knightsWon = false;
+            this.games.set(roomCode,game)
+            return false;
+        } else {
+            game.rounds[game.currentRound].knightsWon = true;
+            this.games.set(roomCode,game)
             return true;
         }
     }
 
-    transitionRound = function(){
+    transitionRound = function(roomCode){
+        let knightsWon = this.checkIfKnightsWin(roomCode);
+        console.log(`KnightsWon: ${knightsWon}`)
         console.log('transitioning round')
+        //store the winner 
+        //send something back to the front-end to show the winner 
     }
+}
+
+export const communicateStartOfGame = (io, toRoom, game) => {
+    io.in(toRoom).emit(navigateToGame.type);
+    io.in(toRoom).emit(updateGameState.type,game);
+}
+
+export const communicatePlayerCantVote = (io,selfId) => {
+    io.to(selfId).emit(updateAllowToVote.type,false)
 }
