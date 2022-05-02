@@ -1,5 +1,5 @@
 import LobbyController from "./lobbyController";
-import GameController, {communicateStartOfGame} from "./gameController";
+import GameController, {communicateStartOfGame,communicatePlayerCantVote} from "./gameController";
 import chalk from 'chalk';
 
 import {
@@ -46,7 +46,7 @@ export default class MainController {
                 const room = this.lobbyController.getRoom(enteredRoomCode)
                 if(room){
                     let game = this.gameController.createGame(room);
-                    communicateStartOfGame(socket,room.roomCode,game);
+                    communicateStartOfGame(io,room.roomCode,game);
                 } else {
                     console.log(chalk.red('Tried to create a gameController without valid room object passed. Passed to function:'))
                     console.log(chalk.red(room))
@@ -62,7 +62,7 @@ export default class MainController {
             })
 
             socket.on(ioPlayerAcknowledged.type,(enteredRoomCode)=>{
-                this.gameController.setGameWithRoomcode(checkAllPlayersAcknowledged(enteredRoomCode));
+                this.gameController.setGameWithRoomcode(this.gameController.checkAllPlayersAcknowledged(enteredRoomCode));
             })
 
             socket.on(ioUpdateSelectedPlayers.type,(payload)=>{
@@ -74,8 +74,8 @@ export default class MainController {
             })
 
             socket.on(ioPlayerCastVote.type,(payload)=>{
-                this.gameController.setGameWithRoomcode(gameController.updatePlayerVote(this.gameController.getGameFromRoomcode(payload.roomCode),payload.selfId,payload.missionPass));
-                communicatePlayerCantVote(socket,payload.selfId);
+                this.gameController.setGameWithRoomcode(this.gameController.updatePlayerVote(this.gameController.getGameFromRoomcode(payload.roomCode),payload.selfId,payload.missionPass));
+                communicatePlayerCantVote(io,payload.selfId);
                 this.gameController.checkAllPlayersVoted(payload.roomCode) ? this.gameController.transitionRound(payload.roomCode) : ()=>{}
             })
         });

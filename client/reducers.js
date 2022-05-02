@@ -4,9 +4,7 @@ const initialGameState = {
     players: [],
     spies: [],
     knights: [],
-    round: [
-
-    ],
+    rounds: [],
     leader: '',
     showRoles: false,
     allAcknowledged: false,
@@ -14,6 +12,8 @@ const initialGameState = {
     currentRound: 0,
     castToVote: false,
     allowToVote: true,
+    showWinner: false,
+    knightsWon: false,
 }
 
 const initialRoomState = {
@@ -96,6 +96,25 @@ const gameSlice = createSlice({
         ioPlayerCastVote(state,{action,payload}){},
         updateAllowToVote(state,{action,payload}){
             return {...state,allowToVote:payload}
+        },
+        showWinner(state,{action,payload}){
+            return {...state,showWinner:true,knightsWon:payload}
+        },
+        hideShowWinner(state,{action,payload}){
+            return {...state,showWinner:false}
+        },
+        resetGameState(state,{action,payload}){
+            return {
+                ...state,
+                allAcknowledged: false,
+                selectedPlayers: [],
+                currentRound: currentRound++,
+                castToVote: false,
+                allowToVote: true,
+                showWinner: false,
+                knightsWon: false,
+                rounds: payload
+            }
         }
     }
 }
@@ -133,6 +152,9 @@ export const {
     ioCastToVote,
     updateCastToVote,
     ioPlayerCastVote,
-    updateAllowToVote
+    updateAllowToVote,
+    showWinner,
+    hideShowWinner,
+    resetGameState
 } = gameSlice.actions;
 

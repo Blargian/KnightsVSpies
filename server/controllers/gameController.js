@@ -1,4 +1,6 @@
-import {Game} from '../models/game'
+import {Game} from '../models/game';
+import {round} from '../models/round';
+
 import {
     navigateToGame,
 } from '../../client/reducers';
@@ -7,7 +9,10 @@ import {
     allPlayersAcknowledged,
     updateSelectedPlayers,
     updateCastToVote,
-    updateAllowToVote
+    updateAllowToVote,
+    showWinner,
+    hideShowWinner,
+    resetGameState
 } from '../../client/reducers';
 import { io } from 'socket.io-client';
 
@@ -24,10 +29,10 @@ export default class GameController {
     } 
 
     checkAllPlayersAcknowledged = function(roomCode){
-        const game = this.games.get(roomCode);
+        let game = this.games.get(roomCode);
         game.playersAcknowledgedRole++;
         if(game.playersAcknowledgedRole === game.players.length){
-            this.io.in(roomCode).emit(allPlayersAcknowledged.type,)
+            this.io.in(roomCode).emit(allPlayersAcknowledged.type)
         }
         return game;
     }
@@ -57,7 +62,7 @@ export default class GameController {
     }
 
     checkAllPlayersVoted = function(roomCode){
-        const game = getGameFromRoomcode(roomCode)
+        const game = this.getGameFromRoomcode(roomCode)
         const currentRound = game.rounds[game.currentRound]
         if((currentRound.numberOfFail + currentRound.numberOfPass) === game.missionRules[game.players.length-5][game.currentRound]){
             return true;
@@ -69,6 +74,7 @@ export default class GameController {
     checkIfKnightsWin = function(roomCode){
         let game = this.games.get(roomCode)
         let currentRound = game.rounds[game.currentRound]
+        console.log(currentRound);
         //if mission fails then spies won
         if(currentRound.numberOfFail>=1 && game.players.length<7){
             game.rounds[game.currentRound].knightsWon = false;
@@ -86,11 +92,43 @@ export default class GameController {
     }
 
     transitionRound = function(roomCode){
+        let game = this.getGameFromRoomcode(roomCode);
         let knightsWon = this.checkIfKnightsWin(roomCode);
         console.log(`KnightsWon: ${knightsWon}`)
         console.log('transitioning round')
-        //store the winner 
+        this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode)) 
+        this.incrementRound(game);
         //send something back to the front-end to show the winner 
+        this.io.in(roomCode).emit(showWinner.type,knightsWon);
+        this.io.in(roomCode).emit(resetGameState.type,game.rounds);
+
+        setTimeout(()=>{
+            //wait 30 seconds and then
+            // hide the winners 
+            this.io.in(roomCode).emit(hideShowWinner.type);
+        },10000)
+            
+            // increment the round and reset what needs to be reset
+    }
+
+    //need to add a new blank round
+    //set game.currentRound++
+    //game.selectedPlayers back to []
+    //game.leader = ''
+    //
+
+    storeWinner = function(knightsWin,game){
+        let updatedGame = game; 
+        updatedGame.rounds[game.currentRound].knightsWon = knightsWin;
+        this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
+    }
+
+    incrementRound = function(game){
+        let updatedGame = game; 
+        updatedGame.currentRound++;
+        console.log(typeof(updatedGame.rounds))
+        updatedGame.rounds.push(round);
+        this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
 }
 

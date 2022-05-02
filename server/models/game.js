@@ -1,4 +1,4 @@
-import {round as firstRound} from '../models/round';
+import {round} from '../models/round';
 import { Room } from './room';
 
 export class Game {
@@ -10,7 +10,7 @@ export class Game {
         this.spies = selectedRoles.spies;
         this.knights = selectedRoles.knights;
         this.rounds = [
-            firstRound
+            round
         ];
         this.leader = this.selectMissionLeader(this.players);
         this.showRoles = true;

@@ -96,3 +96,18 @@ test('updatePlayerVote called with false should increment number of fails by 1',
        }
        expect(gameController.checkIfKnightsWin(mockRoomCodeLarge)).toBeTruthy();
     })
+
+    test('storeWinner stores the winner on game.rounds[currentround].knightsWon if knights won',()=>{
+        expect(game.rounds[game.currentRound].knightsWon).toEqual(null);
+        gameController.storeWinner(true,game); //knights won
+        game = gameController.getGameFromRoomcode(mockRoomCode);
+        expect(game.rounds[game.currentRound].knightsWon).toBeTruthy();
+    });
+
+    test('storeWinner stores the winner on game.rounds[currentround].knightsWon if knights lost',()=>{
+        expect(game.rounds[game.currentRound].knightsWon).toEqual(null);
+        gameController.storeWinner(false,game); //knights won
+        game = gameController.getGameFromRoomcode(mockRoomCode);
+        expect(game.rounds[game.currentRound].knightsWon).toBeFalsy();
+    });
+

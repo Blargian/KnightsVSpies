@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import MissionSelector from './MissionSelector';
+import RoundWinner from './RoundWinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
@@ -75,7 +76,7 @@ const Game = (props) => {
                 isLoading ? <div className="flex flex-col justify-center items-center"><div className="text-white text-center animate-pulse">loading</div><FontAwesomeIcon icon={faSpinner} className='text-white text-6xl animate-spin'/></div> : null
             }
             {
-                props.allAcknowledged ? <div>
+                (props.allAcknowledged && !props.showWinner) ? <div>
                     <MissionSelector 
                         selfId = {props.selfId}
                         players={props.players}
@@ -87,6 +88,10 @@ const Game = (props) => {
                         spyIds={props.spyIds}
                     />
                 </div> : null
+            }
+            {
+                (props.allAcknowledged && props.showWinner) ? 
+                <RoundWinner knightsWon={props.knightsWon}></RoundWinner> : null
             }
         </div>
     )
