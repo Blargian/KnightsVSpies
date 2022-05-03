@@ -1,5 +1,5 @@
 import {Game} from '../models/game';
-import {round} from '../models/round';
+import Round from '../models/round';
 
 import {
     navigateToGame,
@@ -56,6 +56,8 @@ export default class GameController {
 
     updatePlayerVote = function(gameToUpdate,selfId,missionPass){
         let game = gameToUpdate;
+        console.log(game)
+        console.log(game.rounds[game.currentRound])
         missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
         game.rounds[game.currentRound].playersOnMission.push(selfId);
         return game;
@@ -100,12 +102,11 @@ export default class GameController {
         this.incrementRound(game);
         //send something back to the front-end to show the winner 
         this.io.in(roomCode).emit(showWinner.type,knightsWon);
-        this.io.in(roomCode).emit(resetGameState.type,game.rounds);
-
         setTimeout(()=>{
             //wait 30 seconds and then
             // hide the winners 
             this.io.in(roomCode).emit(hideShowWinner.type);
+            this.io.in(roomCode).emit(resetGameState.type,{rounds:game.rounds,currentRound:game.currentRound});
         },10000)
             
             // increment the round and reset what needs to be reset
@@ -126,8 +127,7 @@ export default class GameController {
     incrementRound = function(game){
         let updatedGame = game; 
         updatedGame.currentRound++;
-        console.log(typeof(updatedGame.rounds))
-        updatedGame.rounds.push(round);
+        updatedGame.rounds.push(new Round());
         this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
 }

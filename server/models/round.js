@@ -1,7 +1,8 @@
-export const round = {
-    round: 0,
-    playersOnMission: [],
-    numberOfPass: 0,
-    numberOfFail: 0,
-    knightsWon: null
+export default class Round {
+    constructor(){
+        this.playersOnMission= [];
+        this.numberOfPass = 0;
+        this.numberOfFail = 0;
+        this.knightsWon = false;
+    }
 }

@@ -189,14 +189,13 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
       var action = _ref18.action,
           payload = _ref18.payload;
       return _objectSpread(_objectSpread({}, state), {}, {
-        allAcknowledged: false,
         selectedPlayers: [],
-        currentRound: currentRound++,
+        currentRound: payload.currentRound,
         castToVote: false,
         allowToVote: true,
         showWinner: false,
         knightsWon: false,
-        rounds: payload
+        rounds: payload.rounds
       });
     }
   }
@@ -255,8 +254,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
 /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! socket.io-client */ "socket.io-client");
 /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_3__);
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -306,6 +303,8 @@ var GameController = function GameController(io) {
 
   _defineProperty(this, "updatePlayerVote", function (gameToUpdate, selfId, missionPass) {
     var game = gameToUpdate;
+    console.log(game);
+    console.log(game.rounds[game.currentRound]);
     missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
     game.rounds[game.currentRound].playersOnMission.push(selfId);
     return game;
@@ -353,11 +352,15 @@ var GameController = function GameController(io) {
     this.incrementRound(game); //send something back to the front-end to show the winner 
 
     this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.showWinner.type, knightsWon);
-    this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, game.rounds);
     setTimeout(function () {
       //wait 30 seconds and then
       // hide the winners 
       _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.hideShowWinner.type);
+
+      _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, {
+        rounds: game.rounds,
+        currentRound: game.currentRound
+      });
     }, 10000); // increment the round and reset what needs to be reset
   });
 
@@ -370,8 +373,7 @@ var GameController = function GameController(io) {
   _defineProperty(this, "incrementRound", function (game) {
     var updatedGame = game;
     updatedGame.currentRound++;
-    console.log(_typeof(updatedGame.rounds));
-    updatedGame.rounds.push(_models_round__WEBPACK_IMPORTED_MODULE_1__.round);
+    updatedGame.rounds.push(new _models_round__WEBPACK_IMPORTED_MODULE_1__["default"]());
     this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
   });
 
@@ -729,7 +731,7 @@ var Game = function Game(room) {
   var selectedRoles = this.selectRoles(this.players);
   this.spies = selectedRoles.spies;
   this.knights = selectedRoles.knights;
-  this.rounds = [_models_round__WEBPACK_IMPORTED_MODULE_0__.round];
+  this.rounds = [new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"]()];
   this.leader = this.selectMissionLeader(this.players);
   this.showRoles = true;
   this.playersAcknowledgedRole = 0;
@@ -805,15 +807,20 @@ function Room(_callingPlayerId) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "round": () => (/* binding */ round)
+/* harmony export */   "default": () => (/* binding */ Round)
 /* harmony export */ });
-var round = {
-  round: 0,
-  playersOnMission: [],
-  numberOfPass: 0,
-  numberOfFail: 0,
-  knightsWon: null
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Round = function Round() {
+  _classCallCheck(this, Round);
+
+  this.playersOnMission = [];
+  this.numberOfPass = 0;
+  this.numberOfFail = 0;
+  this.knightsWon = false;
 };
+
+
 
 /***/ }),
 

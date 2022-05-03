@@ -106,14 +106,13 @@ const gameSlice = createSlice({
         resetGameState(state,{action,payload}){
             return {
                 ...state,
-                allAcknowledged: false,
                 selectedPlayers: [],
-                currentRound: currentRound++,
+                currentRound:payload.currentRound,
                 castToVote: false,
                 allowToVote: true,
                 showWinner: false,
                 knightsWon: false,
-                rounds: payload
+                rounds: payload.rounds
             }
         }
     }

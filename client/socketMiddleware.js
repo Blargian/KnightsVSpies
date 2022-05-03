@@ -14,7 +14,8 @@ import {
     updateCastToVote,
     updateAllowToVote,
     showWinner,
-    hideShowWinner
+    hideShowWinner,
+    resetGameState
 } from './reducers';
 
 //A middleware to pass actions to the server 
@@ -67,6 +68,10 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
 
     socket.on(hideShowWinner.type,(payload)=>{
         dispatch(hideShowWinner(payload))
+    })
+
+    socket.on(resetGameState.type,(payload)=>{
+        dispatch(resetGameState(payload))
     })
     
 
