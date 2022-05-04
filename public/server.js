@@ -189,6 +189,7 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
       var action = _ref18.action,
           payload = _ref18.payload;
       return _objectSpread(_objectSpread({}, state), {}, {
+        leader: payload.newLeader,
         selectedPlayers: [],
         currentRound: payload.currentRound,
         castToVote: false,
@@ -303,8 +304,6 @@ var GameController = function GameController(io) {
 
   _defineProperty(this, "updatePlayerVote", function (gameToUpdate, selfId, missionPass) {
     var game = gameToUpdate;
-    console.log(game);
-    console.log(game.rounds[game.currentRound]);
     missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
     game.rounds[game.currentRound].playersOnMission.push(selfId);
     return game;
@@ -323,8 +322,7 @@ var GameController = function GameController(io) {
 
   _defineProperty(this, "checkIfKnightsWin", function (roomCode) {
     var game = this.games.get(roomCode);
-    var currentRound = game.rounds[game.currentRound];
-    console.log(currentRound); //if mission fails then spies won
+    var currentRound = game.rounds[game.currentRound]; //if mission fails then spies won
 
     if (currentRound.numberOfFail >= 1 && game.players.length < 7) {
       game.rounds[game.currentRound].knightsWon = false;
@@ -346,8 +344,6 @@ var GameController = function GameController(io) {
 
     var game = this.getGameFromRoomcode(roomCode);
     var knightsWon = this.checkIfKnightsWin(roomCode);
-    console.log("KnightsWon: ".concat(knightsWon));
-    console.log('transitioning round');
     this.storeWinner(knightsWon, this.getGameFromRoomcode(roomCode));
     this.incrementRound(game); //send something back to the front-end to show the winner 
 
@@ -359,7 +355,8 @@ var GameController = function GameController(io) {
 
       _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, {
         rounds: game.rounds,
-        currentRound: game.currentRound
+        currentRound: game.currentRound,
+        newLeader: game.leader
       });
     }, 10000); // increment the round and reset what needs to be reset
   });
@@ -374,6 +371,7 @@ var GameController = function GameController(io) {
     var updatedGame = game;
     updatedGame.currentRound++;
     updatedGame.rounds.push(new _models_round__WEBPACK_IMPORTED_MODULE_1__["default"]());
+    updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players, updatedGame.leader);
     this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
   });
 
@@ -723,6 +721,19 @@ var Game = function Game(room) {
   _defineProperty(this, "selectMissionLeader", function (players) {
     var randomIndex = Math.ceil(Math.random() * players.length) - 1;
     return players[randomIndex].playerId;
+  });
+
+  _defineProperty(this, "incrementMissionLeader", function (players, previousMissionLeader) {
+    var previousLeaderIndex = players.findIndex(function (player) {
+      return player.playerId === previousMissionLeader;
+    });
+    var leaderIsLast = previousLeaderIndex === players.length - 1;
+
+    if (leaderIsLast) {
+      return players[0].playerId;
+    } else {
+      return players[previousLeaderIndex + 1].playerId;
+    }
   });
 
   this.roomCode = room.roomCode;

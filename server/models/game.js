@@ -47,4 +47,18 @@ export class Game {
         let randomIndex = Math.ceil((Math.random()*players.length))-1;
         return players[randomIndex].playerId;
     }
+
+    // incrementMissionLeader = function(players,previousMissionLeader)
+    // if previous leader is number 4, should return 5
+    // if previous leader is 5 should return 1
+
+    incrementMissionLeader = function(players,previousMissionLeader){
+        let previousLeaderIndex = players.findIndex(player => player.playerId===previousMissionLeader);
+        let leaderIsLast = previousLeaderIndex === players.length-1;
+        if(leaderIsLast){
+            return players[0].playerId;
+        } else {
+            return players[previousLeaderIndex+1].playerId;
+        }
+    }
 }
