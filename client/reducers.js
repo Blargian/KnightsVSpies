@@ -106,6 +106,7 @@ const gameSlice = createSlice({
         resetGameState(state,{action,payload}){
             return {
                 ...state,
+                leader:payload.newLeader,
                 selectedPlayers: [],
                 currentRound:payload.currentRound,
                 castToVote: false,

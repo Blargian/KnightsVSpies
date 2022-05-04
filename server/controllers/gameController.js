@@ -56,8 +56,6 @@ export default class GameController {
 
     updatePlayerVote = function(gameToUpdate,selfId,missionPass){
         let game = gameToUpdate;
-        console.log(game)
-        console.log(game.rounds[game.currentRound])
         missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
         game.rounds[game.currentRound].playersOnMission.push(selfId);
         return game;
@@ -76,7 +74,6 @@ export default class GameController {
     checkIfKnightsWin = function(roomCode){
         let game = this.games.get(roomCode)
         let currentRound = game.rounds[game.currentRound]
-        console.log(currentRound);
         //if mission fails then spies won
         if(currentRound.numberOfFail>=1 && game.players.length<7){
             game.rounds[game.currentRound].knightsWon = false;
@@ -96,8 +93,6 @@ export default class GameController {
     transitionRound = function(roomCode){
         let game = this.getGameFromRoomcode(roomCode);
         let knightsWon = this.checkIfKnightsWin(roomCode);
-        console.log(`KnightsWon: ${knightsWon}`)
-        console.log('transitioning round')
         this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode)) 
         this.incrementRound(game);
         //send something back to the front-end to show the winner 
@@ -106,7 +101,7 @@ export default class GameController {
             //wait 30 seconds and then
             // hide the winners 
             this.io.in(roomCode).emit(hideShowWinner.type);
-            this.io.in(roomCode).emit(resetGameState.type,{rounds:game.rounds,currentRound:game.currentRound});
+            this.io.in(roomCode).emit(resetGameState.type,{rounds:game.rounds,currentRound:game.currentRound,newLeader:game.leader});
         },10000)
             
             // increment the round and reset what needs to be reset
@@ -128,6 +123,7 @@ export default class GameController {
         let updatedGame = game; 
         updatedGame.currentRound++;
         updatedGame.rounds.push(new Round());
+        updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players,updatedGame.leader);
         this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
 }
