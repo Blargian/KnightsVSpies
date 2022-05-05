@@ -3,6 +3,6 @@ export default class Round {
         this.playersOnMission= [];
         this.numberOfPass = 0;
         this.numberOfFail = 0;
-        this.knightsWon = false;
+        this.knightsWon = undefined;
     }
 }

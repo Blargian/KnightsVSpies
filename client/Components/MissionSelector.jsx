@@ -52,6 +52,7 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
         }
     }
 
+    const leaderClass = "text-amber text-2xl text-center align-center";
     const playerDivs = players.map((player)=>{
         return <div 
             key={player.playerId} 
@@ -64,7 +65,7 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
             </div>
     });
 
-    const leaderClass = "text-amber text-2xl text-center align-center";
+    
     const MissionSelectorClass = "basis-2/3 border-2 border-sky-300 border-solid rounded-lg bg-sky400";
     const castToVoteButton = "bg-blue hover:bg-blue text-white font-bold py-2 px-4 rounded";
     const castToVoteButtonDisable = `${castToVoteButton} cursor-not-allowed`;
@@ -74,14 +75,14 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
     
     return(
-        <div>
+        <div className="w-2/5 mx-auto">
             <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
             <div className={MissionSelectorClass}>
             {playerDivs}
             {selfId===missionLeader 
                 ? <div>
                     {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
-                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable} >Cast to vote</button>    
+                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Cast to vote</button>    
                 </div> :null}
                 {selectedPlayers.includes(selfId)?
                 <div>

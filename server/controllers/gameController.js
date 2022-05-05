@@ -57,7 +57,8 @@ export default class GameController {
     updatePlayerVote = function(gameToUpdate,selfId,missionPass){
         let game = gameToUpdate;
         missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
-        game.rounds[game.currentRound].playersOnMission.push(selfId);
+        let playerName = this.getNameFromId(game,selfId);
+        game.rounds[game.currentRound].playersOnMission.push(playerName);
         return game;
     }
 
@@ -122,9 +123,21 @@ export default class GameController {
     incrementRound = function(game){
         let updatedGame = game; 
         updatedGame.currentRound++;
-        updatedGame.rounds.push(new Round());
         updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players,updatedGame.leader);
         this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
+    }
+
+    //works under the assumption that player names will not be the same
+    getNameFromId = (game,providedSelfId) => {
+        let playerName = game.players.filter((player)=>{
+            return player.playerId===providedSelfId
+        })
+        if(playerName[0]){
+            return playerName[0].selfAlias;
+        } else {
+            return null;
+        }
+        
     }
 }
 
@@ -136,3 +149,5 @@ export const communicateStartOfGame = (io, toRoom, game) => {
 export const communicatePlayerCantVote = (io,selfId) => {
     io.to(selfId).emit(updateAllowToVote.type,false)
 }
+
+
