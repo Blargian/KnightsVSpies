@@ -139,6 +139,33 @@ export default class GameController {
         }
         
     }
+
+    checkGameOver(rounds){
+        let timesKnightsWon = 0;
+        let timesSpiesWon = 0;
+        let gameOver = false;
+        let knightsWonGame = null;
+
+        rounds.forEach((round)=>{
+            if(round.knightsWon === true){
+                timesKnightsWon++;
+            } else if (round.knightsWon === false){
+                timesSpiesWon++;
+            }
+        })
+
+        if(timesKnightsWon===3){
+            gameOver = true;
+            knightsWonGame = true;
+            return [gameOver,knightsWonGame]
+        } else if (timesSpiesWon===3){
+            gameOver = true;
+            knightsWonGame = false;
+            return [gameOver,knightsWonGame]
+        } else {
+            return [false,null]
+        }
+    }
 }
 
 export const communicateStartOfGame = (io, toRoom, game) => {

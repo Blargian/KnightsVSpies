@@ -117,3 +117,53 @@ test('updatePlayerVote called with false should increment number of fails by 1',
         let playerName = gameController.getNameFromId(game,playersMock[1].playerId)
         expect(playerName).toBe(playersMock[1].selfAlias);
     });
+
+    test('checkGameOver ends game if knights win 3 times',()=>{
+        gameController.storeWinner(false,game); //knights won
+        let currentGame = gameController.getGameFromRoomcode(mockRoomCode);
+
+        const mockRounds = [
+            {knightsWon:true},
+            {knightsWon:false},
+            {knightsWon:true},
+            {knightsWon:true},
+            {knightsWon:false}
+        ];
+
+        let [gameOver,knightsWonGame] = gameController.checkGameOver(mockRounds);
+        expect(gameOver).toBe(true);
+        expect(knightsWonGame).toBe(true);
+    })
+
+    test('checkGameOver ends game if spies win 3 times',()=>{
+
+        const mockRounds = [
+            {knightsWon:false},
+            {knightsWon:false},
+            {knightsWon:true},
+            {knightsWon:true},
+            {knightsWon:false}
+        ];
+
+        gameController.storeWinner(false,game); //knights won
+        let [gameOver,knightsWonGame] = gameController.checkGameOver(mockRounds);
+        expect(gameOver).toBe(true);
+        expect(knightsWonGame).toBe(false);
+    })
+
+    //Modelled after a case which was observed to be failing during manual testing
+    test('checkGameOver ends game correctly if there are objects without the property',()=>{
+
+        const mockRounds = [
+            {knightsWon:false},
+            {knightsWon:false},
+            {knightsWon:false},
+            {},
+            {}
+        ];
+
+        gameController.storeWinner(false,game); //knights won
+        let [gameOver,knightsWonGame] = gameController.checkGameOver(mockRounds);
+        expect(gameOver).toBe(true);
+        expect(knightsWonGame).toBe(false);
+    })

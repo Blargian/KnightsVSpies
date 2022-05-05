@@ -257,6 +257,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_3__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -265,131 +269,164 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-var GameController = function GameController(io) {
-  _classCallCheck(this, GameController);
+var GameController = /*#__PURE__*/function () {
+  function GameController(io) {
+    _classCallCheck(this, GameController);
 
-  _defineProperty(this, "createGame", function (room) {
-    var game = new _models_game__WEBPACK_IMPORTED_MODULE_0__.Game(room);
-    this.games.set(room.roomCode, game);
-    return game;
-  });
-
-  _defineProperty(this, "checkAllPlayersAcknowledged", function (roomCode) {
-    var game = this.games.get(roomCode);
-    game.playersAcknowledgedRole++;
-
-    if (game.playersAcknowledgedRole === game.players.length) {
-      this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.allPlayersAcknowledged.type);
-    }
-
-    return game;
-  });
-
-  _defineProperty(this, "sendSelectedPlayersToRoom", function (roomCode, selectedPlayers) {
-    this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.updateSelectedPlayers.type, selectedPlayers);
-  });
-
-  _defineProperty(this, "updateCastToVote", function (roomCode, castToVote) {
-    this.castToVote = castToVote;
-    this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.updateCastToVote.type, castToVote);
-  });
-
-  _defineProperty(this, "getGameFromRoomcode", function (roomCode) {
-    return this.games.get(roomCode);
-  });
-
-  _defineProperty(this, "setGameWithRoomcode", function (roomCode, game) {
-    this.games.set(roomCode, game);
-  });
-
-  _defineProperty(this, "updatePlayerVote", function (gameToUpdate, selfId, missionPass) {
-    var game = gameToUpdate;
-    missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
-    var playerName = this.getNameFromId(game, selfId);
-    game.rounds[game.currentRound].playersOnMission.push(playerName);
-    return game;
-  });
-
-  _defineProperty(this, "checkAllPlayersVoted", function (roomCode) {
-    var game = this.getGameFromRoomcode(roomCode);
-    var currentRound = game.rounds[game.currentRound];
-
-    if (currentRound.numberOfFail + currentRound.numberOfPass === game.missionRules[game.players.length - 5][game.currentRound]) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  _defineProperty(this, "checkIfKnightsWin", function (roomCode) {
-    var game = this.games.get(roomCode);
-    var currentRound = game.rounds[game.currentRound]; //if mission fails then spies won
-
-    if (currentRound.numberOfFail >= 1 && game.players.length < 7) {
-      game.rounds[game.currentRound].knightsWon = false;
-      this.games.set(roomCode, game);
-      return false;
-    } else if (currentRound.numberOfFail >= 2 && game.players.length >= 7) {
-      game.rounds[game.currentRound].knightsWon = false;
-      this.games.set(roomCode, game);
-      return false;
-    } else {
-      game.rounds[game.currentRound].knightsWon = true;
-      this.games.set(roomCode, game);
-      return true;
-    }
-  });
-
-  _defineProperty(this, "transitionRound", function (roomCode) {
-    var _this = this;
-
-    var game = this.getGameFromRoomcode(roomCode);
-    var knightsWon = this.checkIfKnightsWin(roomCode);
-    this.storeWinner(knightsWon, this.getGameFromRoomcode(roomCode));
-    this.incrementRound(game); //send something back to the front-end to show the winner 
-
-    this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.showWinner.type, knightsWon);
-    setTimeout(function () {
-      //wait 30 seconds and then
-      // hide the winners 
-      _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.hideShowWinner.type);
-
-      _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, {
-        rounds: game.rounds,
-        currentRound: game.currentRound,
-        newLeader: game.leader
-      });
-    }, 10000); // increment the round and reset what needs to be reset
-  });
-
-  _defineProperty(this, "storeWinner", function (knightsWin, game) {
-    var updatedGame = game;
-    updatedGame.rounds[game.currentRound].knightsWon = knightsWin;
-    this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
-  });
-
-  _defineProperty(this, "incrementRound", function (game) {
-    var updatedGame = game;
-    updatedGame.currentRound++;
-    updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players, updatedGame.leader);
-    this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
-  });
-
-  _defineProperty(this, "getNameFromId", function (game, providedSelfId) {
-    var playerName = game.players.filter(function (player) {
-      return player.playerId === providedSelfId;
+    _defineProperty(this, "createGame", function (room) {
+      var game = new _models_game__WEBPACK_IMPORTED_MODULE_0__.Game(room);
+      this.games.set(room.roomCode, game);
+      return game;
     });
 
-    if (playerName[0]) {
-      return playerName[0].selfAlias;
-    } else {
-      return null;
-    }
-  });
+    _defineProperty(this, "checkAllPlayersAcknowledged", function (roomCode) {
+      var game = this.games.get(roomCode);
+      game.playersAcknowledgedRole++;
 
-  this.io = io;
-  this.games = new Map();
-};
+      if (game.playersAcknowledgedRole === game.players.length) {
+        this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.allPlayersAcknowledged.type);
+      }
+
+      return game;
+    });
+
+    _defineProperty(this, "sendSelectedPlayersToRoom", function (roomCode, selectedPlayers) {
+      this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.updateSelectedPlayers.type, selectedPlayers);
+    });
+
+    _defineProperty(this, "updateCastToVote", function (roomCode, castToVote) {
+      this.castToVote = castToVote;
+      this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.updateCastToVote.type, castToVote);
+    });
+
+    _defineProperty(this, "getGameFromRoomcode", function (roomCode) {
+      return this.games.get(roomCode);
+    });
+
+    _defineProperty(this, "setGameWithRoomcode", function (roomCode, game) {
+      this.games.set(roomCode, game);
+    });
+
+    _defineProperty(this, "updatePlayerVote", function (gameToUpdate, selfId, missionPass) {
+      var game = gameToUpdate;
+      missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
+      var playerName = this.getNameFromId(game, selfId);
+      game.rounds[game.currentRound].playersOnMission.push(playerName);
+      return game;
+    });
+
+    _defineProperty(this, "checkAllPlayersVoted", function (roomCode) {
+      var game = this.getGameFromRoomcode(roomCode);
+      var currentRound = game.rounds[game.currentRound];
+
+      if (currentRound.numberOfFail + currentRound.numberOfPass === game.missionRules[game.players.length - 5][game.currentRound]) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    _defineProperty(this, "checkIfKnightsWin", function (roomCode) {
+      var game = this.games.get(roomCode);
+      var currentRound = game.rounds[game.currentRound]; //if mission fails then spies won
+
+      if (currentRound.numberOfFail >= 1 && game.players.length < 7) {
+        game.rounds[game.currentRound].knightsWon = false;
+        this.games.set(roomCode, game);
+        return false;
+      } else if (currentRound.numberOfFail >= 2 && game.players.length >= 7) {
+        game.rounds[game.currentRound].knightsWon = false;
+        this.games.set(roomCode, game);
+        return false;
+      } else {
+        game.rounds[game.currentRound].knightsWon = true;
+        this.games.set(roomCode, game);
+        return true;
+      }
+    });
+
+    _defineProperty(this, "transitionRound", function (roomCode) {
+      var _this = this;
+
+      var game = this.getGameFromRoomcode(roomCode);
+      var knightsWon = this.checkIfKnightsWin(roomCode);
+      this.storeWinner(knightsWon, this.getGameFromRoomcode(roomCode));
+      this.incrementRound(game); //send something back to the front-end to show the winner 
+
+      this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.showWinner.type, knightsWon);
+      setTimeout(function () {
+        //wait 30 seconds and then
+        // hide the winners 
+        _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.hideShowWinner.type);
+
+        _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, {
+          rounds: game.rounds,
+          currentRound: game.currentRound,
+          newLeader: game.leader
+        });
+      }, 10000); // increment the round and reset what needs to be reset
+    });
+
+    _defineProperty(this, "storeWinner", function (knightsWin, game) {
+      var updatedGame = game;
+      updatedGame.rounds[game.currentRound].knightsWon = knightsWin;
+      this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
+    });
+
+    _defineProperty(this, "incrementRound", function (game) {
+      var updatedGame = game;
+      updatedGame.currentRound++;
+      updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players, updatedGame.leader);
+      this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
+    });
+
+    _defineProperty(this, "getNameFromId", function (game, providedSelfId) {
+      var playerName = game.players.filter(function (player) {
+        return player.playerId === providedSelfId;
+      });
+
+      if (playerName[0]) {
+        return playerName[0].selfAlias;
+      } else {
+        return null;
+      }
+    });
+
+    this.io = io;
+    this.games = new Map();
+  }
+
+  _createClass(GameController, [{
+    key: "checkGameOver",
+    value: function checkGameOver(rounds) {
+      var timesKnightsWon = 0;
+      var timesSpiesWon = 0;
+      var gameOver = false;
+      var knightsWonGame = null;
+      rounds.forEach(function (round) {
+        if (round.knightsWon === true) {
+          timesKnightsWon++;
+        } else if (round.knightsWon === false) {
+          timesSpiesWon++;
+        }
+      });
+
+      if (timesKnightsWon === 3) {
+        gameOver = true;
+        knightsWonGame = true;
+        return [gameOver, knightsWonGame];
+      } else if (timesSpiesWon === 3) {
+        gameOver = true;
+        knightsWonGame = false;
+        return [gameOver, knightsWonGame];
+      } else {
+        return [false, null];
+      }
+    }
+  }]);
+
+  return GameController;
+}();
 
 
 var communicateStartOfGame = function communicateStartOfGame(io, toRoom, game) {
@@ -604,6 +641,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chalk */ "chalk");
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(chalk__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
@@ -668,7 +717,21 @@ var MainController = function MainController(io) {
       _this.gameController.setGameWithRoomcode(_this.gameController.updatePlayerVote(_this.gameController.getGameFromRoomcode(payload.roomCode), payload.selfId, payload.missionPass));
 
       (0,_gameController__WEBPACK_IMPORTED_MODULE_1__.communicatePlayerCantVote)(io, payload.selfId);
-      _this.gameController.checkAllPlayersVoted(payload.roomCode) ? _this.gameController.transitionRound(payload.roomCode) : function () {};
+
+      var allPlayersVoted = _this.gameController.checkAllPlayersVoted(payload.roomCode);
+
+      if (allPlayersVoted) {
+        _this.gameController.transitionRound(payload.roomCode);
+
+        var _this$gameController$ = _this.gameController.checkGameOver(_this.gameController.getGameFromRoomcode(payload.roomCode).rounds),
+            _this$gameController$2 = _slicedToArray(_this$gameController$, 2),
+            gameOver = _this$gameController$2[0],
+            knightsWonGame = _this$gameController$2[1];
+
+        if (!gameOver) {} else {
+          console.log('Game over');
+        }
+      }
     });
   });
 };
