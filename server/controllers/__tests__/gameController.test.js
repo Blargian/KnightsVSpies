@@ -111,3 +111,9 @@ test('updatePlayerVote called with false should increment number of fails by 1',
         expect(game.rounds[game.currentRound].knightsWon).toBeFalsy();
     });
 
+    test('getNameFromId correctly returns the player name from the id',()=>{
+        gameController.storeWinner(false,game); //knights won
+        game = gameController.getGameFromRoomcode(mockRoomCode);
+        let playerName = gameController.getNameFromId(game,playersMock[1].playerId)
+        expect(playerName).toBe(playersMock[1].selfAlias);
+    });

@@ -10,7 +10,11 @@ export class Game {
         this.spies = selectedRoles.spies;
         this.knights = selectedRoles.knights;
         this.rounds = [
-            new Round()
+            new Round(),
+            new Round(),
+            new Round(),
+            new Round(),
+            new Round(),
         ];
         this.leader = this.selectMissionLeader(this.players);
         this.showRoles = true;

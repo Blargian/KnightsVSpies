@@ -305,7 +305,8 @@ var GameController = function GameController(io) {
   _defineProperty(this, "updatePlayerVote", function (gameToUpdate, selfId, missionPass) {
     var game = gameToUpdate;
     missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
-    game.rounds[game.currentRound].playersOnMission.push(selfId);
+    var playerName = this.getNameFromId(game, selfId);
+    game.rounds[game.currentRound].playersOnMission.push(playerName);
     return game;
   });
 
@@ -370,9 +371,20 @@ var GameController = function GameController(io) {
   _defineProperty(this, "incrementRound", function (game) {
     var updatedGame = game;
     updatedGame.currentRound++;
-    updatedGame.rounds.push(new _models_round__WEBPACK_IMPORTED_MODULE_1__["default"]());
     updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players, updatedGame.leader);
     this.setGameWithRoomcode(updatedGame.roomCode, updatedGame);
+  });
+
+  _defineProperty(this, "getNameFromId", function (game, providedSelfId) {
+    var playerName = game.players.filter(function (player) {
+      return player.playerId === providedSelfId;
+    });
+
+    if (playerName[0]) {
+      return playerName[0].selfAlias;
+    } else {
+      return null;
+    }
   });
 
   this.io = io;
@@ -742,7 +754,7 @@ var Game = function Game(room) {
   var selectedRoles = this.selectRoles(this.players);
   this.spies = selectedRoles.spies;
   this.knights = selectedRoles.knights;
-  this.rounds = [new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"]()];
+  this.rounds = [new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"](), new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"](), new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"](), new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"](), new _models_round__WEBPACK_IMPORTED_MODULE_0__["default"]()];
   this.leader = this.selectMissionLeader(this.players);
   this.showRoles = true;
   this.playersAcknowledgedRole = 0;
@@ -828,7 +840,7 @@ var Round = function Round() {
   this.playersOnMission = [];
   this.numberOfPass = 0;
   this.numberOfFail = 0;
-  this.knightsWon = false;
+  this.knightsWon = undefined;
 };
 
 

@@ -7,6 +7,7 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useSelector, useDispatch, connect} from 'react-redux';
 import {ioGetAllData,ioPlayerAcknowledged} from '../reducers';
 import {useParams} from "react-router-dom";
+import MissionHistory from './MissionHistory';
 
 const Game = (props) => {
 
@@ -87,6 +88,7 @@ const Game = (props) => {
                         allowToVote={props.allowToVote}
                         spyIds={props.spyIds}
                     />
+                    <MissionHistory rounds={props.rounds} players={props.players}/>
                 </div> : null
             }
             {
