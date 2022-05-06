@@ -2,7 +2,6 @@ module.exports = {
   content: [
     './public/index.html',
   ],
-  purge: ['./public/*.html',"./client/Components/*.{js,jsx}","./client/*.js"],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     extend: {
