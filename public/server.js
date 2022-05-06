@@ -10,37 +10,37 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "rootReducer": () => (/* binding */ rootReducer),
-/* harmony export */   "ioCreateRoom": () => (/* binding */ ioCreateRoom),
-/* harmony export */   "roomCreated": () => (/* binding */ roomCreated),
-/* harmony export */   "navigateToLobby": () => (/* binding */ navigateToLobby),
-/* harmony export */   "ioEnterRoomCode": () => (/* binding */ ioEnterRoomCode),
-/* harmony export */   "updatePlayers": () => (/* binding */ updatePlayers),
-/* harmony export */   "updateSelf": () => (/* binding */ updateSelf),
+/* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged),
 /* harmony export */   "errorOccured": () => (/* binding */ errorOccured),
-/* harmony export */   "ioPlayerIsReady": () => (/* binding */ ioPlayerIsReady),
-/* harmony export */   "ioStartGame": () => (/* binding */ ioStartGame),
-/* harmony export */   "navigateToGame": () => (/* binding */ navigateToGame),
-/* harmony export */   "returnAllRoomData": () => (/* binding */ returnAllRoomData),
-/* harmony export */   "updateGameState": () => (/* binding */ updateGameState),
+/* harmony export */   "hideShowWinner": () => (/* binding */ hideShowWinner),
+/* harmony export */   "ioCastToVote": () => (/* binding */ ioCastToVote),
+/* harmony export */   "ioCreateRoom": () => (/* binding */ ioCreateRoom),
+/* harmony export */   "ioEnterRoomCode": () => (/* binding */ ioEnterRoomCode),
 /* harmony export */   "ioGetAllData": () => (/* binding */ ioGetAllData),
 /* harmony export */   "ioPlayerAcknowledged": () => (/* binding */ ioPlayerAcknowledged),
-/* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged),
-/* harmony export */   "ioUpdateSelectedPlayers": () => (/* binding */ ioUpdateSelectedPlayers),
-/* harmony export */   "updateSelectedPlayers": () => (/* binding */ updateSelectedPlayers),
-/* harmony export */   "ioCastToVote": () => (/* binding */ ioCastToVote),
-/* harmony export */   "updateCastToVote": () => (/* binding */ updateCastToVote),
 /* harmony export */   "ioPlayerCastVote": () => (/* binding */ ioPlayerCastVote),
-/* harmony export */   "updateAllowToVote": () => (/* binding */ updateAllowToVote),
+/* harmony export */   "ioPlayerIsReady": () => (/* binding */ ioPlayerIsReady),
+/* harmony export */   "ioStartGame": () => (/* binding */ ioStartGame),
+/* harmony export */   "ioUpdateSelectedPlayers": () => (/* binding */ ioUpdateSelectedPlayers),
+/* harmony export */   "navigateToGame": () => (/* binding */ navigateToGame),
+/* harmony export */   "navigateToLobby": () => (/* binding */ navigateToLobby),
+/* harmony export */   "resetGameState": () => (/* binding */ resetGameState),
+/* harmony export */   "returnAllRoomData": () => (/* binding */ returnAllRoomData),
+/* harmony export */   "roomCreated": () => (/* binding */ roomCreated),
+/* harmony export */   "rootReducer": () => (/* binding */ rootReducer),
 /* harmony export */   "showWinner": () => (/* binding */ showWinner),
-/* harmony export */   "hideShowWinner": () => (/* binding */ hideShowWinner),
-/* harmony export */   "resetGameState": () => (/* binding */ resetGameState)
+/* harmony export */   "updateAllowToVote": () => (/* binding */ updateAllowToVote),
+/* harmony export */   "updateCastToVote": () => (/* binding */ updateCastToVote),
+/* harmony export */   "updateGameState": () => (/* binding */ updateGameState),
+/* harmony export */   "updatePlayers": () => (/* binding */ updatePlayers),
+/* harmony export */   "updateSelectedPlayers": () => (/* binding */ updateSelectedPlayers),
+/* harmony export */   "updateSelf": () => (/* binding */ updateSelf)
 /* harmony export */ });
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @reduxjs/toolkit */ "@reduxjs/toolkit");
 /* harmony import */ var _reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__);
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -246,9 +246,9 @@ var _gameSlice$actions = gameSlice.actions,
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ GameController),
+/* harmony export */   "communicatePlayerCantVote": () => (/* binding */ communicatePlayerCantVote),
 /* harmony export */   "communicateStartOfGame": () => (/* binding */ communicateStartOfGame),
-/* harmony export */   "communicatePlayerCantVote": () => (/* binding */ communicatePlayerCantVote)
+/* harmony export */   "default": () => (/* binding */ GameController)
 /* harmony export */ });
 /* harmony import */ var _models_game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/game */ "./server/models/game.js");
 /* harmony import */ var _models_round__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/round */ "./server/models/round.js");
@@ -259,7 +259,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -451,20 +451,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
 /* harmony import */ var _models_room__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/room */ "./server/models/room.js");
-/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chalk */ "chalk");
-/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(chalk__WEBPACK_IMPORTED_MODULE_2__);
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
  // one instance is made on server start up
@@ -502,7 +499,7 @@ var LobbyController = /*#__PURE__*/function () {
       try {
         this.removePlayerFromRoom(playerId);
       } catch (error) {
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red('an error occured trying to remove a player from their room'));
+        console.log(chalk.red('an error occured trying to remove a player from their room'));
         console.log(error);
       }
     });
@@ -588,7 +585,7 @@ var LobbyController = /*#__PURE__*/function () {
 
         return room.players;
       } else {
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red("no room was found for ".concat(enteredCode)));
+        console.log(chalk.red("no room was found for ".concat(enteredCode)));
       }
     }
   }, {
@@ -638,9 +635,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _lobbyController__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lobbyController */ "./server/controllers/lobbyController.js");
 /* harmony import */ var _gameController__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gameController */ "./server/controllers/gameController.js");
-/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chalk */ "chalk");
-/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(chalk__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
+/* harmony import */ var _client_reducers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../client/reducers */ "./client/reducers.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -653,14 +648,17 @@ function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Sy
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
 
  //Handles socket 
 
-var MainController = function MainController(io) {
+var MainController = /*#__PURE__*/_createClass(function MainController(io) {
   var _this = this;
 
   _classCallCheck(this, MainController);
@@ -669,23 +667,23 @@ var MainController = function MainController(io) {
   this.lobbyController = new _lobbyController__WEBPACK_IMPORTED_MODULE_0__["default"](this.io);
   this.gameController = new _gameController__WEBPACK_IMPORTED_MODULE_1__["default"](this.io);
   this.io.on("connection", function (socket) {
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioCreateRoom.type, function () {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioCreateRoom.type, function () {
       socket.join(_this.lobbyController.createRoom(socket.id));
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioEnterRoomCode.type, function (enteredRoomCode) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioEnterRoomCode.type, function (enteredRoomCode) {
       _this.lobbyController.joinRoom(enteredRoomCode, socket);
     });
     socket.on("disconnect", function () {
       _this.lobbyController.playerLeft(socket.id);
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerIsReady.type, function (payload) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioPlayerIsReady.type, function (payload) {
       var updatedPlayers = _this.lobbyController.updatePlayerReadiness(payload.playerId);
 
       _this.lobbyController.rooms.get(payload.roomCode).updatePlayers(updatedPlayers);
 
       _this.lobbyController.sendUpdatedPlayersToRoom(updatedPlayers, payload.roomCode);
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioStartGame.type, function (enteredRoomCode) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioStartGame.type, function (enteredRoomCode) {
       var room = _this.lobbyController.getRoom(enteredRoomCode);
 
       if (room) {
@@ -693,27 +691,27 @@ var MainController = function MainController(io) {
 
         (0,_gameController__WEBPACK_IMPORTED_MODULE_1__.communicateStartOfGame)(io, room.roomCode, game);
       } else {
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red('Tried to create a gameController without valid room object passed. Passed to function:'));
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_2___default().red(room));
+        console.log('Tried to create a gameController without valid room object passed. Passed to function:');
+        console.log(room);
       }
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioGetAllData.type, function (enteredRoomCode) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioGetAllData.type, function (enteredRoomCode) {
       if (_this.lobbyController.checkRoomExists(enteredRoomCode)) {
         _this.lobbyController.emitAllRoomData(enteredRoomCode, socket.id);
       } else {
-        io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.errorOccured.type, 'No Such Room Exists...');
+        io.to(socket.id).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.errorOccured.type, 'No Such Room Exists...');
       }
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerAcknowledged.type, function (enteredRoomCode) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioPlayerAcknowledged.type, function (enteredRoomCode) {
       _this.gameController.setGameWithRoomcode(_this.gameController.checkAllPlayersAcknowledged(enteredRoomCode));
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioUpdateSelectedPlayers.type, function (payload) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioUpdateSelectedPlayers.type, function (payload) {
       _this.gameController.sendSelectedPlayersToRoom(payload.roomCode, payload.newSelectedPlayers);
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioCastToVote.type, function (payload) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioCastToVote.type, function (payload) {
       _this.gameController.updateCastToVote(payload.roomCode, payload.castToVote);
     });
-    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_3__.ioPlayerCastVote.type, function (payload) {
+    socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioPlayerCastVote.type, function (payload) {
       _this.gameController.setGameWithRoomcode(_this.gameController.updatePlayerVote(_this.gameController.getGameFromRoomcode(payload.roomCode), payload.selfId, payload.missionPass));
 
       (0,_gameController__WEBPACK_IMPORTED_MODULE_1__.communicatePlayerCantVote)(io, payload.selfId);
@@ -734,7 +732,7 @@ var MainController = function MainController(io) {
       }
     });
   });
-};
+});
 
 
 
@@ -764,13 +762,17 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-var Game = function Game(room) {
+var Game = /*#__PURE__*/_createClass(function Game(room) {
   _classCallCheck(this, Game);
 
   _defineProperty(this, "selectRoles", function (players) {
@@ -831,7 +833,7 @@ var Game = function Game(room) {
   [3, 4, 4, 5, 5] //10 players
   ];
 } //selects 1/3 (rounded up) of players to be spies 
-;
+);
 
 /***/ }),
 
@@ -849,13 +851,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var randomstring__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(randomstring__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! socket.io-client */ "socket.io-client");
 /* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_1__);
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-var Room = //callingPlayerId: socket.id
+var Room = /*#__PURE__*/_createClass( //callingPlayerId: socket.id
 function Room(_callingPlayerId) {
   _classCallCheck(this, Room);
 
@@ -881,7 +887,7 @@ function Room(_callingPlayerId) {
   this.roomCode = this.generateRoomCode();
   this.players = [];
   this.addPlayer(_callingPlayerId);
-};
+});
 
 /***/ }),
 
@@ -895,16 +901,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Round)
 /* harmony export */ });
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Round = function Round() {
+var Round = /*#__PURE__*/_createClass(function Round() {
   _classCallCheck(this, Round);
 
   this.playersOnMission = [];
   this.numberOfPass = 0;
   this.numberOfFail = 0;
   this.knightsWon = undefined;
-};
+});
 
 
 
@@ -945,16 +955,6 @@ __webpack_require__.r(__webpack_exports__);
 /***/ ((module) => {
 
 module.exports = require("@reduxjs/toolkit");
-
-/***/ }),
-
-/***/ "chalk":
-/*!************************!*\
-  !*** external "chalk" ***!
-  \************************/
-/***/ ((module) => {
-
-module.exports = require("chalk");
 
 /***/ }),
 

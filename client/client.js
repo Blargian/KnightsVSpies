@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
+import App from './Components/App';
 import Lobby from './Components/Lobby';
 import Game from './Components/Game';
 import store from './store.js';
