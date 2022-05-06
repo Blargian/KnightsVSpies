@@ -1114,8 +1114,9 @@ expressServer.get('*', function (req, res) {
 });
 var httpServer = (0,http__WEBPACK_IMPORTED_MODULE_2__.createServer)(expressServer);
 var io = (0,_socket__WEBPACK_IMPORTED_MODULE_1__["default"])(httpServer);
-httpServer.listen(3000, function () {
-  console.log("Server running on http://localhost:3000");
+var port = process.env.PORT || 3000;
+httpServer.listen(port, function () {
+  console.log("Server running on port ".concat(port));
 });
 var mainController = new _controllers_mainController__WEBPACK_IMPORTED_MODULE_4__["default"](io);
 })();
