@@ -1,6 +1,6 @@
 import React from 'react';
-import knightsWonImage from '../assets/knights_won.png';
-import spiesWonImage from '../assets/spies_won.png';
+import knightsWonImage from '';
+import spiesWonImage from '';
 
 const RoundWinner = ({knightsWon}) => {
     return (
