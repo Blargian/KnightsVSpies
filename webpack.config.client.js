@@ -24,11 +24,15 @@ module.exports = {
         {
           test: /\.css$/i,
           include: path.resolve(__dirname, 'client'),
-          use: ['style-loader', 'css-loader?url=false', 'postcss-loader'],
+          use: ['style-loader', 'css-loader', 'postcss-loader'],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          type: 'asset/resource',
+          loader: 'file-loader',
+          options: {
+            name: '/assets/[name].[ext]',
+            esModule: false,
+          }
         },
       ],
     },
