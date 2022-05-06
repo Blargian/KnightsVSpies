@@ -1,6 +1,5 @@
 import LobbyController from "./lobbyController";
 import GameController, {communicateStartOfGame,communicatePlayerCantVote} from "./gameController";
-import chalk from 'chalk';
 
 import {
     ioCreateRoom,
@@ -48,8 +47,8 @@ export default class MainController {
                     let game = this.gameController.createGame(room);
                     communicateStartOfGame(io,room.roomCode,game);
                 } else {
-                    console.log(chalk.red('Tried to create a gameController without valid room object passed. Passed to function:'))
-                    console.log(chalk.red(room))
+                    console.log('Tried to create a gameController without valid room object passed. Passed to function:')
+                    console.log(room)
                 }
             })
 

@@ -7,7 +7,6 @@ import {
 } from '../../client/reducers';
 
 import { Room } from '../models/room';
-import chalk from 'chalk';
 
 // one instance is made on server start up
 export default class LobbyController{
