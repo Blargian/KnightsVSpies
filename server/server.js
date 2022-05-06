@@ -15,8 +15,9 @@ const httpServer = createServer(expressServer);
 
 const io = socketServer(httpServer);
 
-httpServer.listen(3000, ()=> {
-    console.log(`Server running on http://localhost:3000`);
+const port = process.env.PORT || 3000
+httpServer.listen(port, ()=> {
+    console.log(`Server running on port ${port}`);
 });
 
 const mainController = new MainController(io);
