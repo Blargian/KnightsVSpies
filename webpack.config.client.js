@@ -24,8 +24,7 @@ module.exports = {
         {
           test: /\.css$/i,
           include: path.resolve(__dirname, 'client'),
-          use: ['style-loader', 'css-loader', 'postcss-loader'],
-          loader: "css-loader?url=false",
+          use: ['style-loader', 'css-loader?url=false', 'postcss-loader'],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
