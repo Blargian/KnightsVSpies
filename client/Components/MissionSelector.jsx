@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote} from '../reducers';
+import MissionVoter from './MissionVoter'
 
 const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, currentRound, selfId, castToVote,allowToVote, spyIds}) =>{
 
@@ -75,30 +76,25 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
     
     return(
-        <div className="w-2/5 mx-auto">
-            <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
-            <div className={MissionSelectorClass}>
-            {playerDivs}
-            {selfId===missionLeader 
-                ? <div>
-                    {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
-                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Cast to vote</button>    
-                </div> :null}
-                {selectedPlayers.includes(selfId)?
-                <div>
-                    {spyIds.includes(selfId) && castToVote ? 
+        <div>
+            {castToVote ?
+                <MissionVoter missionLeaderId={missionLeader} selectedPlayerIds={selectedPlayers}/> 
+                : 
+                <div className="w-2/5 mx-auto">
+                    <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
+                    <div className={MissionSelectorClass}>
+                    {playerDivs}
+                    {
+                    selfId===missionLeader ? 
                     <div>
-                        <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Accept</button>
-                        <button onClick={()=>{voteHandler(false)}} className={castToVote && allowToVote ? failMissionButton : failMissionButtonDisable}>Veto</button>
-                    </div> : null
-                    }
-                    {!spyIds.includes(selfId) && castToVote ?
-                    <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Accept</button>
+                        {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
+                        <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Send on mission</button>    
+                    </div> 
                     : null
                     }
-                </div> : null
-                }
-        </div>
+                </div>
+            </div>
+            }
         </div>
     )
 }
