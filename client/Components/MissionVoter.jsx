@@ -13,12 +13,27 @@ const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
 const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId}) =>{
     
     return(
-        <div>
+        <div className="w-2/5 mx-auto">
             <div>
-                <h1 className="text-white">{players.filter((player)=>player.playerId==missionLeaderId ? player.selfAlias : null)} voted to send on the mission:</h1>
-                <h2 className="text-white">
-                    {players.filter((player)=>{player.playerId==playerId ? player.selfAlias : null})}
-                </h2>
+                {players.map((player)=>{
+                    if(player.playerId==missionLeaderId){
+                        return <h1 key={player.playerId} className="text-white">{player.selfAlias}</h1>
+                    }
+                    })
+                } 
+                <h1 className="text-white">voted to send on the mission:</h1>
+                <div>
+                    {
+                        players.map((player=>{
+                            return selectedPlayerIds.map(selectedId=>{
+                                if(player.playerId==selectedId){
+                                    return <h2 key={player.playerId} className="text-white">{player.selfAlias}</h2>
+                                }
+                            })
+                        }))
+                    }
+                </div>
+                
             </div>
             {
                 playerId!==missionLeaderId ?
@@ -26,9 +41,8 @@ const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId}) =>{
                     <button onClick={()=>{}} className={passMissionButton}>Accept</button>
                     <button onClick={()=>{}} className={failMissionButton}>Veto</button>
                 </div> :
-                null
+                <div></div>
             }
-            
         </div>
     )
 }
