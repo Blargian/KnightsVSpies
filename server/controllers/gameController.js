@@ -54,6 +54,19 @@ export default class GameController {
         this.games.set(roomCode,game)
     }
 
+    //updates a players choice whether to veto or pass the mission
+    updateVetoDecision = function(roomCode, playerId, veto){
+        console.log(`${playerId} : ${veto} updated`)
+        let game = this.getGameFromRoomcode(roomCode)
+        console.log(game)
+        if(veto==true){
+            game.rounds[game.currentRound].vetoed.push(playerId)
+        } if(veto==false) {
+            game.rounds[game.currentRound].accepted.push(playerId)
+        }
+        console.log(game.rounds[game.currentRound])
+    }
+
     updatePlayerVote = function(gameToUpdate,selfId,missionPass){
         let game = gameToUpdate;
         missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;

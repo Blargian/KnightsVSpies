@@ -115,7 +115,8 @@ const gameSlice = createSlice({
                 knightsWon: false,
                 rounds: payload.rounds
             }
-        }
+        },
+        ioVetoMissionHandler(state,{action,payload}){},
     }
 }
 );
@@ -155,6 +156,7 @@ export const {
     updateAllowToVote,
     showWinner,
     hideShowWinner,
-    resetGameState
+    resetGameState,
+    ioVetoMissionHandler
 } = gameSlice.actions;
 

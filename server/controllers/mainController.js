@@ -11,7 +11,8 @@ import {
     ioUpdateSelectedPlayers,
     ioGetAllData,
     ioCastToVote,
-    ioPlayerCastVote
+    ioPlayerCastVote,
+    ioVetoMissionHandler,
 } from '../../client/reducers';
 
 //Handles socket 
@@ -84,6 +85,10 @@ export default class MainController {
                         console.log('Game over')
                     }
                 }
+            })
+
+            socket.on(ioVetoMissionHandler.type,(payload)=>{
+                this.gameController.updateVetoDecision(payload.roomCode,payload.playerId,payload.vetoMission);
             })
         });
     }

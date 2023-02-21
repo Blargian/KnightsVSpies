@@ -3,15 +3,22 @@ import { useSelector, useDispatch,connect} from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote} from '../reducers';
+import { ioVetoMissionHandler } from '../reducers';
 
 const passMissionButton = "bg-green hover:bg-green text-white font-bold py-2 px-4 rounded";
 const passMissionButtonDisable = `${passMissionButton} cursor-not-allowed`;
 const failMissionButton = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded";
 const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
 
-const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId}) =>{
+const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId,roomCode}) =>{
     
+    const dispatch = useDispatch();
+
+    const VetoMissionHandler = (roomCode,veto,playerId) => {
+        dispatch(ioVetoMissionHandler({roomCode,playerId,vetoMission:veto}));
+        console.log(`player ${playerId} vetoed: ${veto}`);
+    }
+
     return(
         <div className="w-2/5 mx-auto">
             <div>
@@ -38,8 +45,8 @@ const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId}) =>{
             {
                 playerId!==missionLeaderId ?
                 <div>
-                    <button onClick={()=>{}} className={passMissionButton}>Accept</button>
-                    <button onClick={()=>{}} className={failMissionButton}>Veto</button>
+                    <button onClick={()=>{VetoMissionHandler(roomCode,false,playerId)}} className={passMissionButton}>Accept</button>
+                    <button onClick={()=>{VetoMissionHandler(roomCode,false,playerId)}} className={failMissionButton}>Veto</button>
                 </div> :
                 <div></div>
             }
@@ -50,9 +57,11 @@ const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId}) =>{
 const mapStateToProps = (state,ownProps) => {
     const playerId = state.room.selfId;
     const players = state.room.players;
+    const roomCode = state.room.roomCode;
     return {
         players,
         playerId,
+        roomCode,
         ...ownProps
     }
 }
