@@ -13,10 +13,12 @@ const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
 const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId,roomCode}) =>{
     
     const dispatch = useDispatch();
+    const [hasChosen,setHasChosen] = useState(false);
 
     const VetoMissionHandler = (roomCode,veto,playerId) => {
         dispatch(ioVetoMissionHandler({roomCode,playerId,vetoMission:veto}));
-        console.log(`player ${playerId} vetoed: ${veto}`);
+        //hide the veto and accept buttons 
+        setHasChosen(true);
     }
 
     return(
@@ -43,10 +45,10 @@ const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId,roomCo
                 
             </div>
             {
-                playerId!==missionLeaderId ?
+                playerId!==missionLeaderId && !hasChosen ?
                 <div>
                     <button onClick={()=>{VetoMissionHandler(roomCode,false,playerId)}} className={passMissionButton}>Accept</button>
-                    <button onClick={()=>{VetoMissionHandler(roomCode,false,playerId)}} className={failMissionButton}>Veto</button>
+                    <button onClick={()=>{VetoMissionHandler(roomCode,true,playerId)}} className={failMissionButton}>Veto</button>
                 </div> :
                 <div></div>
             }

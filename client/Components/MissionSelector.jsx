@@ -3,10 +3,10 @@ import { useSelector, useDispatch,connect} from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote} from '../reducers';
+import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote, ioVetoMissionHandler} from '../reducers';
 import MissionVoter from './MissionVoter'
 
-const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, currentRound, selfId, castToVote,allowToVote, spyIds}) =>{
+const MissionSelector = ({roomCode, players, rounds, selectedPlayers, missionLeader, currentRound, playerId, selfId, castToVote,allowToVote, spyIds}) =>{
 
     const dispatch = useDispatch();
     const missionRules = [
@@ -49,6 +49,7 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     const castToVoteHandler = () => {
         if(selectedPlayers.length === maxPlayersInRound){
             //send a message to the server to say that it's ready to get votes
+            dispatch(ioVetoMissionHandler({roomCode,playerId,vetoMission:false})); //mission leader automatically accepts to go on the mission
             dispatch(ioCastToVote({roomCode:roomCode,castToVote:true}));
         }
     }
@@ -77,7 +78,7 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     
     return(
         <div>
-            {castToVote ?
+            {castToVote && (rounds[currentRound].missionWasVetoed==null)?
                 <MissionVoter missionLeaderId={missionLeader} selectedPlayerIds={selectedPlayers}/> 
                 : 
                 <div className="w-2/5 mx-auto">
@@ -104,6 +105,7 @@ const mapStateToProps = (state,ownProps) => {
     const playerId = state.room.selfId;
     return {
         roomCode,
+        playerId,
         ...ownProps
     }
 }

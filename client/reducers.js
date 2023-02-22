@@ -117,6 +117,9 @@ const gameSlice = createSlice({
             }
         },
         ioVetoMissionHandler(state,{action,payload}){},
+        updateMissionVetoed(state,{action,payload}){
+            state.rounds[state.currentRound].missionWasVetoed = payload;
+        },
     }
 }
 );
@@ -157,6 +160,7 @@ export const {
     showWinner,
     hideShowWinner,
     resetGameState,
-    ioVetoMissionHandler
+    ioVetoMissionHandler,
+    updateMissionVetoed,
 } = gameSlice.actions;
 

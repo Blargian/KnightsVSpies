@@ -6,5 +6,6 @@ export default class Round {
         this.knightsWon = undefined;
         this.accepted = [];
         this.vetoed = []; 
+        this.missionWasVetoed = null; 
     }
 }

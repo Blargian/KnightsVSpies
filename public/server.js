@@ -33,6 +33,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "updateAllowToVote": () => (/* binding */ updateAllowToVote),
 /* harmony export */   "updateCastToVote": () => (/* binding */ updateCastToVote),
 /* harmony export */   "updateGameState": () => (/* binding */ updateGameState),
+/* harmony export */   "updateMissionVetoed": () => (/* binding */ updateMissionVetoed),
 /* harmony export */   "updatePlayers": () => (/* binding */ updatePlayers),
 /* harmony export */   "updateSelectedPlayers": () => (/* binding */ updateSelectedPlayers),
 /* harmony export */   "updateSelf": () => (/* binding */ updateSelf)
@@ -203,6 +204,11 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
     ioVetoMissionHandler: function ioVetoMissionHandler(state, _ref19) {
       var action = _ref19.action,
         payload = _ref19.payload;
+    },
+    updateMissionVetoed: function updateMissionVetoed(state, _ref20) {
+      var action = _ref20.action,
+        payload = _ref20.payload;
+      state.rounds[state.currentRound].missionWasVetoed = payload;
     }
   }
 });
@@ -242,7 +248,8 @@ var _gameSlice$actions = gameSlice.actions,
   showWinner = _gameSlice$actions.showWinner,
   hideShowWinner = _gameSlice$actions.hideShowWinner,
   resetGameState = _gameSlice$actions.resetGameState,
-  ioVetoMissionHandler = _gameSlice$actions.ioVetoMissionHandler;
+  ioVetoMissionHandler = _gameSlice$actions.ioVetoMissionHandler,
+  updateMissionVetoed = _gameSlice$actions.updateMissionVetoed;
 
 
 /***/ }),
@@ -306,16 +313,38 @@ var GameController = /*#__PURE__*/function () {
       this.games.set(roomCode, game);
     });
     _defineProperty(this, "updateVetoDecision", function (roomCode, playerId, veto) {
-      console.log("".concat(playerId, " : ").concat(veto, " updated"));
       var game = this.getGameFromRoomcode(roomCode);
-      console.log(game);
-      if (veto == true) {
+      if (veto === true) {
         game.rounds[game.currentRound].vetoed.push(playerId);
-      }
-      if (veto == false) {
+      } else if (veto === false) {
         game.rounds[game.currentRound].accepted.push(playerId);
       }
-      console.log(game.rounds[game.currentRound]);
+    });
+    _defineProperty(this, "checkVetoStatus", function (roomCode) {
+      var returnObject = {
+        allPlayersVoted: false,
+        vetoMission: false
+      };
+      var game = this.getGameFromRoomcode(roomCode);
+      var currentRound = game.rounds[game.currentRound];
+      if (currentRound.vetoed.length + currentRound.accepted.length === game.players.length) {
+        returnObject.allPlayersVoted = true;
+      }
+      ;
+      if (currentRound.vetoed.length > currentRound.accepted.length) {
+        returnObject.vetoMission = true;
+      } else {
+        returnObject.vetoMission = false;
+      }
+      ;
+      return returnObject;
+    });
+    _defineProperty(this, "updateMissionVetoed", function (roomCode, vetoed) {
+      if (vetoed) {
+        this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.updateMissionVetoed.type, true);
+      } else {
+        this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.updateMissionVetoed.type, false);
+      }
     });
     _defineProperty(this, "updatePlayerVote", function (gameToUpdate, selfId, missionPass) {
       var game = gameToUpdate;
@@ -692,6 +721,12 @@ var MainController = /*#__PURE__*/_createClass(function MainController(io) {
     });
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioVetoMissionHandler.type, function (payload) {
       _this.gameController.updateVetoDecision(payload.roomCode, payload.playerId, payload.vetoMission);
+      var vetoStatus = _this.gameController.checkVetoStatus(payload.roomCode);
+      console.log("veto status: ".concat(vetoStatus.allPlayersVoted));
+      if (vetoStatus.allPlayersVoted) {
+        console.log("running updateMissionVetoed");
+        _this.gameController.updateMissionVetoed(payload.roomCode, vetoStatus.vetoMission);
+      }
     });
   });
 });
@@ -865,6 +900,7 @@ var Round = /*#__PURE__*/_createClass(function Round() {
   this.knightsWon = undefined;
   this.accepted = [];
   this.vetoed = [];
+  this.missionWasVetoed = null;
 });
 
 

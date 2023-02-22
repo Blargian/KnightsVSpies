@@ -10,6 +10,7 @@ import {
     updateSelectedPlayers,
     updateCastToVote,
     updateAllowToVote,
+    updateMissionVetoed,
     showWinner,
     hideShowWinner,
     resetGameState
@@ -54,17 +55,43 @@ export default class GameController {
         this.games.set(roomCode,game)
     }
 
-    //updates a players choice whether to veto or pass the mission
+    //updates a players choice whether to veto or pass the mission from MissionVoter component. 
     updateVetoDecision = function(roomCode, playerId, veto){
-        console.log(`${playerId} : ${veto} updated`)
         let game = this.getGameFromRoomcode(roomCode)
-        console.log(game)
-        if(veto==true){
+        if(veto===true){
             game.rounds[game.currentRound].vetoed.push(playerId)
-        } if(veto==false) {
+        } else if(veto===false) {
             game.rounds[game.currentRound].accepted.push(playerId)
         }
-        console.log(game.rounds[game.currentRound])
+    }
+
+    //checks for majority veto or majority pass
+    //return {allPlayersVoted: boolean, vetoMission: boolean} 
+    checkVetoStatus = function(roomCode){
+        let returnObject = {
+            allPlayersVoted: false,
+            vetoMission: false
+        };
+        const game = this.getGameFromRoomcode(roomCode);
+        const currentRound = game.rounds[game.currentRound];
+        if((currentRound.vetoed.length + currentRound.accepted.length)===game.players.length){
+            returnObject.allPlayersVoted = true; 
+        };
+        if(currentRound.vetoed.length > currentRound.accepted.length){
+            returnObject.vetoMission = true;
+        } else {
+            returnObject.vetoMission = false;
+        };
+        return returnObject;
+    }
+
+    //emits actions to inform the client that the mission whould go ahead or not 
+    updateMissionVetoed = function(roomCode,vetoed){
+        if(vetoed){
+            this.io.in(roomCode).emit(updateMissionVetoed.type,true);
+        } else {
+            this.io.in(roomCode).emit(updateMissionVetoed.type,false);
+        }
     }
 
     updatePlayerVote = function(gameToUpdate,selfId,missionPass){

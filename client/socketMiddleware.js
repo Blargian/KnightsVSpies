@@ -12,6 +12,7 @@ import {
     allPlayersAcknowledged,
     updateSelectedPlayers,
     updateCastToVote,
+    updateMissionVetoed,
     updateAllowToVote,
     showWinner,
     hideShowWinner,
@@ -60,6 +61,10 @@ export const socketMiddleware = (socket) => ({dispatch,getState}) => next => {
 
     socket.on(updateAllowToVote.type,(payload)=>{
         dispatch(updateAllowToVote(payload))
+    })
+
+    socket.on(updateMissionVetoed.type,(payload)=>{
+        dispatch(updateMissionVetoed(payload))
     })
 
     socket.on(showWinner.type,(payload)=>{

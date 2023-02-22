@@ -89,6 +89,12 @@ export default class MainController {
 
             socket.on(ioVetoMissionHandler.type,(payload)=>{
                 this.gameController.updateVetoDecision(payload.roomCode,payload.playerId,payload.vetoMission);
+                const vetoStatus = this.gameController.checkVetoStatus(payload.roomCode);
+                console.log(`veto status: ${vetoStatus.allPlayersVoted}`)
+                if(vetoStatus.allPlayersVoted){
+                    console.log(`running updateMissionVetoed`)
+                    this.gameController.updateMissionVetoed(payload.roomCode,vetoStatus.vetoMission);
+                }
             })
         });
     }
