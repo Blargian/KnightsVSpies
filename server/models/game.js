@@ -28,7 +28,8 @@ export class Game {
             [3,4,4,5,5], //8 players
             [3,4,4,5,5], //9 players
             [3,4,4,5,5] //10 players
-        ]
+        ],
+        this.numberOfVetos = 0; 
     }
 
     //selects 1/3 (rounded up) of players to be spies 

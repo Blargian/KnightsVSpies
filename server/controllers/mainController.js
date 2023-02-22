@@ -92,7 +92,6 @@ export default class MainController {
                 const vetoStatus = this.gameController.checkVetoStatus(payload.roomCode);
                 console.log(`veto status: ${vetoStatus.allPlayersVoted}`)
                 if(vetoStatus.allPlayersVoted){
-                    console.log(`running updateMissionVetoed`)
                     this.gameController.updateMissionVetoed(payload.roomCode,vetoStatus.vetoMission);
                 }
             })

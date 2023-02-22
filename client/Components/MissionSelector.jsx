@@ -85,14 +85,25 @@ const MissionSelector = ({roomCode, players, rounds, selectedPlayers, missionLea
                     <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
                     <div className={MissionSelectorClass}>
                     {playerDivs}
-                    {
-                    selfId===missionLeader ? 
+              {selfId===missionLeader 
+                ? <div>
+                    {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
+                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Cast to vote</button>    
+                </div> :null}
+                {selectedPlayers.includes(selfId)?
+                <div>
+                    {spyIds.includes(selfId) && castToVote ? 
                     <div>
-                        {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
-                        <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Send on mission</button>    
-                    </div> 
+                        <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Pass Mission</button>
+                        <button onClick={()=>{voteHandler(false)}} className={castToVote && allowToVote ? failMissionButton : failMissionButtonDisable}>Fail Mission</button>
+                    </div> : null
+                    }
+                    {!spyIds.includes(selfId) && castToVote ?
+                    <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Pass Mission</button>
                     : null
                     }
+                </div> : null
+                }
                 </div>
             </div>
             }

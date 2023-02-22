@@ -59,6 +59,7 @@ export default class GameController {
     updateVetoDecision = function(roomCode, playerId, veto){
         let game = this.getGameFromRoomcode(roomCode)
         if(veto===true){
+            game.numberOfVetos++;
             game.rounds[game.currentRound].vetoed.push(playerId)
         } else if(veto===false) {
             game.rounds[game.currentRound].accepted.push(playerId)
@@ -89,6 +90,7 @@ export default class GameController {
     updateMissionVetoed = function(roomCode,vetoed){
         if(vetoed){
             this.io.in(roomCode).emit(updateMissionVetoed.type,true);
+            this.transitionRound(roomCode);
         } else {
             this.io.in(roomCode).emit(updateMissionVetoed.type,false);
         }
@@ -115,6 +117,11 @@ export default class GameController {
     checkIfKnightsWin = function(roomCode){
         let game = this.games.get(roomCode)
         let currentRound = game.rounds[game.currentRound]
+
+        //if mission was vetoed then nobody wins
+        if(currentRound.numberOfFail===0 && currentRound.numberOfPass===0){
+            return null;
+        }
         //if mission fails then spies won
         if(currentRound.numberOfFail>=1 && game.players.length<7){
             game.rounds[game.currentRound].knightsWon = false;
@@ -134,8 +141,14 @@ export default class GameController {
     transitionRound = function(roomCode){
         let game = this.getGameFromRoomcode(roomCode);
         let knightsWon = this.checkIfKnightsWin(roomCode);
-        this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode)) 
-        this.incrementRound(game);
+        if(knightsWon!==null){
+            game.numberOfVetos = 0; //reset veto count as we are only concerned about sequential vetos ending the game
+            this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode))
+            this.incrementRound(game);
+        } else{
+            this.resetRound(game);
+        } 
+        this.incrementLeader(game);
         //send something back to the front-end to show the winner 
         this.io.in(roomCode).emit(showWinner.type,knightsWon);
         setTimeout(()=>{
@@ -146,6 +159,13 @@ export default class GameController {
         },10000)
             
             // increment the round and reset what needs to be reset
+    }
+
+    //After a veto, resets the state for the current round 
+    resetRound = function(game){
+        let updatedGame = game
+        updatedGame.rounds[game.currentRound] = new Round(); 
+        this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
 
     //need to add a new blank round
@@ -163,6 +183,11 @@ export default class GameController {
     incrementRound = function(game){
         let updatedGame = game; 
         updatedGame.currentRound++;
+        this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
+    }
+
+    incrementLeader = function(game){
+        let updatedGame = game; 
         updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players,updatedGame.leader);
         this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
@@ -185,6 +210,12 @@ export default class GameController {
         let timesSpiesWon = 0;
         let gameOver = false;
         let knightsWonGame = null;
+
+        if(this.game.numberOfVetos===game.players.length){
+            gameOver = true;
+            knightsWonGame = null;
+            return [gameOver,knightsWonGame]
+        }
 
         rounds.forEach((round)=>{
             if(round.knightsWon === true){
