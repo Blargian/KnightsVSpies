@@ -10,6 +10,7 @@ import {
     updateSelectedPlayers,
     updateCastToVote,
     updateAllowToVote,
+    updateMissionVetoed,
     showWinner,
     hideShowWinner,
     resetGameState
@@ -54,6 +55,56 @@ export default class GameController {
         this.games.set(roomCode,game)
     }
 
+    //updates a players choice whether to veto or pass the mission from MissionVoter component. 
+    updateVetoDecision = function(roomCode, playerId, veto){
+        let game = this.getGameFromRoomcode(roomCode)
+        if(veto===true){
+            game.rounds[game.currentRound].vetoed.push(playerId)
+        } else if(veto===false) {
+            game.rounds[game.currentRound].accepted.push(playerId)
+        }
+        this.setGameWithRoomcode(roomCode,game);
+    }
+
+    //checks for majority veto or majority pass
+    //return {allPlayersVoted: boolean, vetoMission: boolean} 
+    checkVetoStatus = function(roomCode){
+        let returnObject = {
+            allPlayersVoted: false,
+            vetoMission: false
+        };
+        const game = this.getGameFromRoomcode(roomCode);
+        const currentRound = game.rounds[game.currentRound];
+        if((currentRound.vetoed.length + currentRound.accepted.length)===game.players.length){
+            returnObject.allPlayersVoted = true; 
+        };
+        if(currentRound.vetoed.length > currentRound.accepted.length){
+            returnObject.vetoMission = true;
+        } else {
+            returnObject.vetoMission = false;
+        };
+        return returnObject;
+    }
+
+    //emits actions to inform the client that the mission whould go ahead or not 
+    updateMissionVetoed = function(roomCode,vetoed){
+        if(vetoed){
+            let game = this.getGameFromRoomcode(roomCode);
+            game.numberOfVetos++;
+            this.io.in(roomCode).emit(updateMissionVetoed.type,true);
+            this.transitionRound(roomCode);
+            let [gameOver,knightsWonGame] = this.checkGameOver(game);
+            if(gameOver){
+                console.log('Game over')
+            }
+        } else {
+            let game = this.getGameFromRoomcode(roomCode);
+            game.numberOfVetos = 0; //if players did not veto then the veto count gets reset 
+            this.setGameWithRoomcode(roomCode,game);
+            this.io.in(roomCode).emit(updateMissionVetoed.type,false);
+        }
+    }
+
     updatePlayerVote = function(gameToUpdate,selfId,missionPass){
         let game = gameToUpdate;
         missionPass ? game.rounds[game.currentRound].numberOfPass++ : game.rounds[game.currentRound].numberOfFail++;
@@ -75,6 +126,11 @@ export default class GameController {
     checkIfKnightsWin = function(roomCode){
         let game = this.games.get(roomCode)
         let currentRound = game.rounds[game.currentRound]
+
+        //if mission was vetoed then nobody wins
+        if(currentRound.numberOfFail===0 && currentRound.numberOfPass===0){
+            return null;
+        }
         //if mission fails then spies won
         if(currentRound.numberOfFail>=1 && game.players.length<7){
             game.rounds[game.currentRound].knightsWon = false;
@@ -94,8 +150,13 @@ export default class GameController {
     transitionRound = function(roomCode){
         let game = this.getGameFromRoomcode(roomCode);
         let knightsWon = this.checkIfKnightsWin(roomCode);
-        this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode)) 
-        this.incrementRound(game);
+        if(knightsWon!==null){
+            this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode))
+            this.incrementRound(game);
+        } else{
+            this.resetRound(game);
+        } 
+        this.incrementLeader(game);
         //send something back to the front-end to show the winner 
         this.io.in(roomCode).emit(showWinner.type,knightsWon);
         setTimeout(()=>{
@@ -106,6 +167,13 @@ export default class GameController {
         },10000)
             
             // increment the round and reset what needs to be reset
+    }
+
+    //After a veto, resets the state for the current round 
+    resetRound = function(game){
+        let updatedGame = game
+        updatedGame.rounds[game.currentRound] = new Round(); 
+        this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
 
     //need to add a new blank round
@@ -123,6 +191,11 @@ export default class GameController {
     incrementRound = function(game){
         let updatedGame = game; 
         updatedGame.currentRound++;
+        this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
+    }
+
+    incrementLeader = function(game){
+        let updatedGame = game; 
         updatedGame.leader = updatedGame.incrementMissionLeader(updatedGame.players,updatedGame.leader);
         this.setGameWithRoomcode(updatedGame.roomCode,updatedGame);
     }
@@ -140,11 +213,19 @@ export default class GameController {
         
     }
 
-    checkGameOver(rounds){
+    checkGameOver(game){
+
+        let rounds = game.rounds
         let timesKnightsWon = 0;
         let timesSpiesWon = 0;
         let gameOver = false;
         let knightsWonGame = null;
+
+        if(game.numberOfVetos===game.players.length){
+            gameOver = true;
+            knightsWonGame = null;
+            return [gameOver,knightsWonGame]
+        }
 
         rounds.forEach((round)=>{
             if(round.knightsWon === true){

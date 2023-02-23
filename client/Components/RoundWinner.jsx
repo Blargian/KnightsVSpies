@@ -7,8 +7,8 @@ const RoundWinner = ({knightsWon}) => {
     const winnerClass = "text-center p-5 mx-auto"
     return (
         <div className="text-center animate-fadein">
-            <h1 className="text-white text-3xl">{knightsWon ? "Knights" : "Spies"} won the round</h1>
-            {knightsWon ? <img className={winnerClass} src={knightsWinImage}/> : <img className={winnerClass} src={spiesWinImage}/>}
+            {knightsWon!==null ? <h1 className="text-white text-3xl">{knightsWon? "Knights" : "Spies"} won the round</h1> : null}
+            {knightsWon===true ? <img className={winnerClass} src={knightsWinImage}/> : (knightsWon!==true && knightsWon===false) ? <img className={winnerClass} src={spiesWinImage}/> : <h1 className="text-white text-3xl">MISSION VETOED</h1>}
         </div>
     )
 }

@@ -87,6 +87,7 @@ const Game = (props) => {
                         castToVote={props.castToVote}
                         allowToVote={props.allowToVote}
                         spyIds={props.spyIds}
+                        rounds={props.rounds}
                     />
                     <MissionHistory rounds={props.rounds} players={props.players}/>
                 </div> : null

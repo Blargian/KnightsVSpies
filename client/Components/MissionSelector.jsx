@@ -3,9 +3,10 @@ import { useSelector, useDispatch,connect} from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote} from '../reducers';
+import { ioUpdateSelectedPlayers,ioCastToVote,ioPlayerCastVote, ioVetoMissionHandler} from '../reducers';
+import MissionVoter from './MissionVoter'
 
-const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, currentRound, selfId, castToVote,allowToVote, spyIds}) =>{
+const MissionSelector = ({roomCode, players, rounds, selectedPlayers, missionLeader, currentRound, playerId, selfId, castToVote,allowToVote, spyIds}) =>{
 
     const dispatch = useDispatch();
     const missionRules = [
@@ -48,6 +49,7 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     const castToVoteHandler = () => {
         if(selectedPlayers.length === maxPlayersInRound){
             //send a message to the server to say that it's ready to get votes
+            dispatch(ioVetoMissionHandler({roomCode,playerId,vetoMission:false})); //mission leader automatically accepts to go on the mission
             dispatch(ioCastToVote({roomCode:roomCode,castToVote:true}));
         }
     }
@@ -75,30 +77,36 @@ const MissionSelector = ({roomCode, players, selectedPlayers, missionLeader, cur
     const failMissionButtonDisable = `${failMissionButton} cursor-not-allowed`;
     
     return(
-        <div className="w-2/5 mx-auto">
-            <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
-            <div className={MissionSelectorClass}>
-            {playerDivs}
-            {selfId===missionLeader 
+        <div>
+            {castToVote && (rounds[currentRound].missionWasVetoed==null)?
+                <MissionVoter missionLeaderId={missionLeader} selectedPlayerIds={selectedPlayers}/> 
+                : 
+                <div className="w-2/5 mx-auto">
+                    <h3 className="text-white">You are a {spyIds.includes(selfId)?"Spy" : "Knight"}</h3>
+                    <div className={MissionSelectorClass}>
+                    {playerDivs}
+              {selfId===missionLeader 
                 ? <div>
                     {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
-                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Cast to vote</button>    
+                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Send on mission</button>    
                 </div> :null}
                 {selectedPlayers.includes(selfId)?
                 <div>
                     {spyIds.includes(selfId) && castToVote ? 
                     <div>
-                        <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Accept</button>
-                        <button onClick={()=>{voteHandler(false)}} className={castToVote && allowToVote ? failMissionButton : failMissionButtonDisable}>Veto</button>
+                        <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Pass Mission</button>
+                        <button onClick={()=>{voteHandler(false)}} className={castToVote && allowToVote ? failMissionButton : failMissionButtonDisable}>Fail Mission</button>
                     </div> : null
                     }
                     {!spyIds.includes(selfId) && castToVote ?
-                    <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Accept</button>
+                    <button onClick={()=>{voteHandler(true)}} className={castToVote && allowToVote ? passMissionButton : passMissionButtonDisable}>Pass Mission</button>
                     : null
                     }
                 </div> : null
                 }
-        </div>
+                </div>
+            </div>
+            }
         </div>
     )
 }
@@ -108,6 +116,7 @@ const mapStateToProps = (state,ownProps) => {
     const playerId = state.room.selfId;
     return {
         roomCode,
+        playerId,
         ...ownProps
     }
 }

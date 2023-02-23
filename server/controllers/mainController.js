@@ -11,7 +11,8 @@ import {
     ioUpdateSelectedPlayers,
     ioGetAllData,
     ioCastToVote,
-    ioPlayerCastVote
+    ioPlayerCastVote,
+    ioVetoMissionHandler,
 } from '../../client/reducers';
 
 //Handles socket 
@@ -78,11 +79,19 @@ export default class MainController {
                 let allPlayersVoted = this.gameController.checkAllPlayersVoted(payload.roomCode);
                 if(allPlayersVoted){
                     this.gameController.transitionRound(payload.roomCode);
-                    let [gameOver,knightsWonGame] = this.gameController.checkGameOver(this.gameController.getGameFromRoomcode(payload.roomCode).rounds);
+                    let [gameOver,knightsWonGame] = this.gameController.checkGameOver(this.gameController.getGameFromRoomcode(payload.roomCode));
                     if(!gameOver){
                     } else {
                         console.log('Game over')
                     }
+                }
+            })
+
+            socket.on(ioVetoMissionHandler.type,(payload)=>{
+                this.gameController.updateVetoDecision(payload.roomCode,payload.playerId,payload.vetoMission);
+                const vetoStatus = this.gameController.checkVetoStatus(payload.roomCode);
+                if(vetoStatus.allPlayersVoted){
+                    this.gameController.updateMissionVetoed(payload.roomCode,vetoStatus.vetoMission);
                 }
             })
         });
