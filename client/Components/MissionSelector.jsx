@@ -88,7 +88,7 @@ const MissionSelector = ({roomCode, players, rounds, selectedPlayers, missionLea
               {selfId===missionLeader 
                 ? <div>
                     {((maxPlayersInRound - selectedPlayers.length)!==0) ? <h3>{`Select ${maxPlayersInRound - selectedPlayers.length} players to go on mission` }</h3> : null}
-                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Cast to vote</button>    
+                    <button onClick={castToVoteHandler} className={allowToVote ? castToVoteButton: castToVoteButtonDisable}>Send on mission</button>    
                 </div> :null}
                 {selectedPlayers.includes(selfId)?
                 <div>

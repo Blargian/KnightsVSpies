@@ -59,11 +59,11 @@ export default class GameController {
     updateVetoDecision = function(roomCode, playerId, veto){
         let game = this.getGameFromRoomcode(roomCode)
         if(veto===true){
-            game.numberOfVetos++;
             game.rounds[game.currentRound].vetoed.push(playerId)
         } else if(veto===false) {
             game.rounds[game.currentRound].accepted.push(playerId)
         }
+        this.setGameWithRoomcode(roomCode,game);
     }
 
     //checks for majority veto or majority pass
@@ -89,9 +89,18 @@ export default class GameController {
     //emits actions to inform the client that the mission whould go ahead or not 
     updateMissionVetoed = function(roomCode,vetoed){
         if(vetoed){
+            let game = this.getGameFromRoomcode(roomCode);
+            game.numberOfVetos++;
             this.io.in(roomCode).emit(updateMissionVetoed.type,true);
             this.transitionRound(roomCode);
+            let [gameOver,knightsWonGame] = this.checkGameOver(game);
+            if(gameOver){
+                console.log('Game over')
+            }
         } else {
+            let game = this.getGameFromRoomcode(roomCode);
+            game.numberOfVetos = 0; //if players did not veto then the veto count gets reset 
+            this.setGameWithRoomcode(roomCode,game);
             this.io.in(roomCode).emit(updateMissionVetoed.type,false);
         }
     }
@@ -142,7 +151,6 @@ export default class GameController {
         let game = this.getGameFromRoomcode(roomCode);
         let knightsWon = this.checkIfKnightsWin(roomCode);
         if(knightsWon!==null){
-            game.numberOfVetos = 0; //reset veto count as we are only concerned about sequential vetos ending the game
             this.storeWinner(knightsWon,this.getGameFromRoomcode(roomCode))
             this.incrementRound(game);
         } else{
@@ -205,13 +213,15 @@ export default class GameController {
         
     }
 
-    checkGameOver(rounds){
+    checkGameOver(game){
+
+        let rounds = game.rounds
         let timesKnightsWon = 0;
         let timesSpiesWon = 0;
         let gameOver = false;
         let knightsWonGame = null;
 
-        if(this.game.numberOfVetos===game.players.length){
+        if(game.numberOfVetos===game.players.length){
             gameOver = true;
             knightsWonGame = null;
             return [gameOver,knightsWonGame]

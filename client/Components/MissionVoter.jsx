@@ -26,29 +26,30 @@ const MissionVoter = ({missionLeaderId,selectedPlayerIds,players,playerId,roomCo
             <div>
                 {players.map((player)=>{
                     if(player.playerId==missionLeaderId){
-                        return <h1 key={player.playerId} className="text-white">{player.selfAlias}</h1>
+                        return <h1 key={player.playerId} className="text-white text-center align-center">{player.selfAlias}</h1>
                     }
                     })
                 } 
-                <h1 className="text-white">voted to send on the mission:</h1>
-                <div>
+                <h1 className="text-white text-center align-center">voted to send</h1>
+                <div className="m-5">
                     {
                         players.map((player=>{
                             return selectedPlayerIds.map(selectedId=>{
                                 if(player.playerId==selectedId){
-                                    return <h2 key={player.playerId} className="text-white">{player.selfAlias}</h2>
+                                    return <h2 key={player.playerId} className="text-white text-center align-center">{player.selfAlias}</h2>
                                 }
                             })
                         }))
                     }
                 </div>
+                <h1 className="text-white text-center align-center">on the mission</h1>
                 
             </div>
             {
                 playerId!==missionLeaderId && !hasChosen ?
-                <div>
-                    <button onClick={()=>{VetoMissionHandler(roomCode,false,playerId)}} className={passMissionButton}>Accept</button>
-                    <button onClick={()=>{VetoMissionHandler(roomCode,true,playerId)}} className={failMissionButton}>Veto</button>
+                <div className="flex flex-col justify-center items-center">
+                    <button onClick={()=>{VetoMissionHandler(roomCode,false,playerId)}} className={passMissionButton+"text-center align-center m-2"}>Accept</button>
+                    <button onClick={()=>{VetoMissionHandler(roomCode,true,playerId)}} className={failMissionButton+"text-center align-center m-2"}>Veto</button>
                 </div> :
                 <div></div>
             }

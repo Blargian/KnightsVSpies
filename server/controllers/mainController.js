@@ -79,7 +79,7 @@ export default class MainController {
                 let allPlayersVoted = this.gameController.checkAllPlayersVoted(payload.roomCode);
                 if(allPlayersVoted){
                     this.gameController.transitionRound(payload.roomCode);
-                    let [gameOver,knightsWonGame] = this.gameController.checkGameOver(this.gameController.getGameFromRoomcode(payload.roomCode).rounds);
+                    let [gameOver,knightsWonGame] = this.gameController.checkGameOver(this.gameController.getGameFromRoomcode(payload.roomCode));
                     if(!gameOver){
                     } else {
                         console.log('Game over')
@@ -90,7 +90,6 @@ export default class MainController {
             socket.on(ioVetoMissionHandler.type,(payload)=>{
                 this.gameController.updateVetoDecision(payload.roomCode,payload.playerId,payload.vetoMission);
                 const vetoStatus = this.gameController.checkVetoStatus(payload.roomCode);
-                console.log(`veto status: ${vetoStatus.allPlayersVoted}`)
                 if(vetoStatus.allPlayersVoted){
                     this.gameController.updateMissionVetoed(payload.roomCode,vetoStatus.vetoMission);
                 }
