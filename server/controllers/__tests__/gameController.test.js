@@ -129,8 +129,8 @@ test('updatePlayerVote called with false should increment number of fails by 1',
             {knightsWon:true},
             {knightsWon:false}
         ];
-
-        let [gameOver,knightsWonGame] = gameController.checkGameOver(mockRounds);
+        game.rounds = mockRounds; 
+        let [gameOver,knightsWonGame] = gameController.checkGameOver(game);
         expect(gameOver).toBe(true);
         expect(knightsWonGame).toBe(true);
     })
@@ -144,9 +144,10 @@ test('updatePlayerVote called with false should increment number of fails by 1',
             {knightsWon:true},
             {knightsWon:false}
         ];
+        game.rounds = mockRounds; 
 
         gameController.storeWinner(false,game); //knights won
-        let [gameOver,knightsWonGame] = gameController.checkGameOver(mockRounds);
+        let [gameOver,knightsWonGame] = gameController.checkGameOver(game);
         expect(gameOver).toBe(true);
         expect(knightsWonGame).toBe(false);
     })
@@ -161,9 +162,9 @@ test('updatePlayerVote called with false should increment number of fails by 1',
             {},
             {}
         ];
-
+        game.rounds = mockRounds; 
         gameController.storeWinner(false,game); //knights won
-        let [gameOver,knightsWonGame] = gameController.checkGameOver(mockRounds);
+        let [gameOver,knightsWonGame] = gameController.checkGameOver(game);
         expect(gameOver).toBe(true);
         expect(knightsWonGame).toBe(false);
     })
