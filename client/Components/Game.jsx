@@ -8,6 +8,7 @@ import { useSelector, useDispatch, connect} from 'react-redux';
 import {ioGetAllData,ioPlayerAcknowledged} from '../reducers';
 import {useParams} from "react-router-dom";
 import MissionHistory from './MissionHistory';
+import GameOver from './GameOver'
 
 const Game = (props) => {
 
@@ -51,7 +52,7 @@ const Game = (props) => {
     
     return(
         <div className={appClass}>
-            {props.showRoles ? 
+            {props.showRoles && !props.gameOver ? 
                 <div className="flex flex-col justify-center content-center items-center">
                     <h1 className="text-white text-center">{props.selfAlias} you are a</h1>
                     {props.isSpy ? 
@@ -77,7 +78,7 @@ const Game = (props) => {
                 isLoading ? <div className="flex flex-col justify-center items-center"><div className="text-white text-center animate-pulse">loading</div><FontAwesomeIcon icon={faSpinner} className='text-white text-6xl animate-spin'/></div> : null
             }
             {
-                (props.allAcknowledged && !props.showWinner) ? <div>
+                (props.allAcknowledged && !props.showWinner && !props.gameOver) ? <div>
                     <MissionSelector 
                         selfId = {props.selfId}
                         players={props.players}
@@ -93,8 +94,12 @@ const Game = (props) => {
                 </div> : null
             }
             {
-                (props.allAcknowledged && props.showWinner) ? 
+                (props.allAcknowledged && props.showWinner && !props.gameOver) ? 
                 <RoundWinner knightsWon={props.knightsWon}></RoundWinner> : null
+            }
+            {
+                props.gameOver ? 
+                <GameOver knightsWon={props.knightsWonGame}/> : null
             }
         </div>
     )

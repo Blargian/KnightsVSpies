@@ -12,6 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "allPlayersAcknowledged": () => (/* binding */ allPlayersAcknowledged),
 /* harmony export */   "errorOccured": () => (/* binding */ errorOccured),
+/* harmony export */   "gameOver": () => (/* binding */ gameOver),
 /* harmony export */   "hideShowWinner": () => (/* binding */ hideShowWinner),
 /* harmony export */   "ioCastToVote": () => (/* binding */ ioCastToVote),
 /* harmony export */   "ioCreateRoom": () => (/* binding */ ioCreateRoom),
@@ -60,7 +61,9 @@ var initialGameState = {
   castToVote: false,
   allowToVote: true,
   showWinner: false,
-  knightsWon: false
+  knightsWon: false,
+  gameOver: false,
+  knightsWonGame: null
 };
 var initialRoomState = {
   selfId: '',
@@ -198,7 +201,9 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
         allowToVote: true,
         showWinner: false,
         knightsWon: false,
-        rounds: payload.rounds
+        rounds: payload.rounds,
+        gameOver: false,
+        knightsWonGame: null
       });
     },
     ioVetoMissionHandler: function ioVetoMissionHandler(state, _ref19) {
@@ -209,6 +214,14 @@ var gameSlice = (0,_reduxjs_toolkit__WEBPACK_IMPORTED_MODULE_0__.createSlice)({
       var action = _ref20.action,
         payload = _ref20.payload;
       state.rounds[state.currentRound].missionWasVetoed = payload;
+    },
+    gameOver: function gameOver(state, _ref21) {
+      var action = _ref21.action,
+        payload = _ref21.payload;
+      return _objectSpread(_objectSpread({}, state), {}, {
+        gameOver: true,
+        knightsWonGame: payload.knightsWonGame
+      });
     }
   }
 });
@@ -249,7 +262,8 @@ var _gameSlice$actions = gameSlice.actions,
   hideShowWinner = _gameSlice$actions.hideShowWinner,
   resetGameState = _gameSlice$actions.resetGameState,
   ioVetoMissionHandler = _gameSlice$actions.ioVetoMissionHandler,
-  updateMissionVetoed = _gameSlice$actions.updateMissionVetoed;
+  updateMissionVetoed = _gameSlice$actions.updateMissionVetoed,
+  gameOver = _gameSlice$actions.gameOver;
 
 
 /***/ }),
@@ -354,10 +368,10 @@ var GameController = /*#__PURE__*/function () {
         this.transitionRound(roomCode);
         var _this$checkGameOver = this.checkGameOver(game),
           _this$checkGameOver2 = _slicedToArray(_this$checkGameOver, 2),
-          gameOver = _this$checkGameOver2[0],
+          _gameOver = _this$checkGameOver2[0],
           knightsWonGame = _this$checkGameOver2[1];
-        if (gameOver) {
-          console.log('Game over');
+        if (_gameOver) {
+          this.io["in"](roomCode).emit(_gameOver.type, knightsWonGame);
         }
       } else {
         var _game = this.getGameFromRoomcode(roomCode);
@@ -417,18 +431,20 @@ var GameController = /*#__PURE__*/function () {
       }
       this.incrementLeader(game);
       //send something back to the front-end to show the winner 
-      this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.showWinner.type, knightsWon);
-      setTimeout(function () {
-        //wait 30 seconds and then
-        // hide the winners 
-        _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.hideShowWinner.type);
-        _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, {
-          rounds: game.rounds,
-          currentRound: game.currentRound,
-          newLeader: game.leader
-        });
-      }, 10000);
-
+      console.log(game.gameOver);
+      if (!game.gameOver) {
+        this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.showWinner.type, knightsWon);
+        setTimeout(function () {
+          //wait and then
+          // hide the winners 
+          _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.hideShowWinner.type);
+          _this.io["in"](roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.resetGameState.type, {
+            rounds: game.rounds,
+            currentRound: game.currentRound,
+            newLeader: game.leader
+          });
+        }, 5000);
+      }
       // increment the round and reset what needs to be reset
     });
     _defineProperty(this, "resetRound", function (game) {
@@ -750,17 +766,20 @@ var MainController = /*#__PURE__*/_createClass(function MainController(io) {
       _this.gameController.updateCastToVote(payload.roomCode, payload.castToVote);
     });
     socket.on(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.ioPlayerCastVote.type, function (payload) {
-      _this.gameController.setGameWithRoomcode(_this.gameController.updatePlayerVote(_this.gameController.getGameFromRoomcode(payload.roomCode), payload.selfId, payload.missionPass));
+      var game = _this.gameController.getGameFromRoomcode(payload.roomCode);
+      _this.gameController.setGameWithRoomcode(payload.roomCode, _this.gameController.updatePlayerVote(game, payload.selfId, payload.missionPass));
       (0,_gameController__WEBPACK_IMPORTED_MODULE_1__.communicatePlayerCantVote)(io, payload.selfId);
       var allPlayersVoted = _this.gameController.checkAllPlayersVoted(payload.roomCode);
       if (allPlayersVoted) {
         _this.gameController.transitionRound(payload.roomCode);
-        var _this$gameController$ = _this.gameController.checkGameOver(_this.gameController.getGameFromRoomcode(payload.roomCode)),
+        var _this$gameController$ = _this.gameController.checkGameOver(game),
           _this$gameController$2 = _slicedToArray(_this$gameController$, 2),
-          gameOver = _this$gameController$2[0],
+          gameOverFlag = _this$gameController$2[0],
           knightsWonGame = _this$gameController$2[1];
-        if (!gameOver) {} else {
-          console.log('Game over');
+        if (!gameOverFlag) {} else {
+          game.gameOver = true;
+          _this.gameController.setGameWithRoomcode(payload.roomCode, game);
+          _this.io["in"](payload.roomCode).emit(_client_reducers__WEBPACK_IMPORTED_MODULE_2__.gameOver.type, knightsWonGame);
         }
       }
     });
@@ -862,6 +881,8 @@ var Game = /*#__PURE__*/_createClass(function Game(room) {
   //9 players
   [3, 4, 4, 5, 5] //10 players
   ], this.numberOfVetos = 0;
+  this.knightsWonGame = null;
+  this.gameOver = false;
 }
 
 //selects 1/3 (rounded up) of players to be spies 
