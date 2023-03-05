@@ -13,7 +13,8 @@ import {
     updateMissionVetoed,
     showWinner,
     hideShowWinner,
-    resetGameState
+    resetGameState,
+    gameOver
 } from '../../client/reducers';
 import { io } from 'socket.io-client';
 
@@ -95,7 +96,7 @@ export default class GameController {
             this.transitionRound(roomCode);
             let [gameOver,knightsWonGame] = this.checkGameOver(game);
             if(gameOver){
-                console.log('Game over')
+                this.io.in(roomCode).emit(gameOver.type,knightsWonGame);
             }
         } else {
             let game = this.getGameFromRoomcode(roomCode);
@@ -158,14 +159,16 @@ export default class GameController {
         } 
         this.incrementLeader(game);
         //send something back to the front-end to show the winner 
-        this.io.in(roomCode).emit(showWinner.type,knightsWon);
-        setTimeout(()=>{
-            //wait 30 seconds and then
-            // hide the winners 
-            this.io.in(roomCode).emit(hideShowWinner.type);
-            this.io.in(roomCode).emit(resetGameState.type,{rounds:game.rounds,currentRound:game.currentRound,newLeader:game.leader});
-        },10000)
-            
+        console.log(game.gameOver)
+        if(!game.gameOver){
+            this.io.in(roomCode).emit(showWinner.type,knightsWon);
+            setTimeout(()=>{
+                //wait and then
+                // hide the winners 
+                this.io.in(roomCode).emit(hideShowWinner.type);
+                this.io.in(roomCode).emit(resetGameState.type,{rounds:game.rounds,currentRound:game.currentRound,newLeader:game.leader});
+            },5000)
+        }    
             // increment the round and reset what needs to be reset
     }
 

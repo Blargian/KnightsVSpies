@@ -14,6 +14,8 @@ const initialGameState = {
     allowToVote: true,
     showWinner: false,
     knightsWon: false,
+    gameOver: false,
+    knightsWonGame: null,
 }
 
 const initialRoomState = {
@@ -113,12 +115,17 @@ const gameSlice = createSlice({
                 allowToVote: true,
                 showWinner: false,
                 knightsWon: false,
-                rounds: payload.rounds
+                rounds: payload.rounds,
+                gameOver: false,
+                knightsWonGame: null
             }
         },
         ioVetoMissionHandler(state,{action,payload}){},
         updateMissionVetoed(state,{action,payload}){
             state.rounds[state.currentRound].missionWasVetoed = payload;
+        },
+        gameOver(state,{action,payload}){
+            return {...state,gameOver:true,knightsWonGame:payload.knightsWonGame}
         },
     }
 }
@@ -162,5 +169,6 @@ export const {
     resetGameState,
     ioVetoMissionHandler,
     updateMissionVetoed,
+    gameOver
 } = gameSlice.actions;
 

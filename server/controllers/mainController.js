@@ -13,6 +13,7 @@ import {
     ioCastToVote,
     ioPlayerCastVote,
     ioVetoMissionHandler,
+    gameOver
 } from '../../client/reducers';
 
 //Handles socket 
@@ -74,15 +75,19 @@ export default class MainController {
             })
 
             socket.on(ioPlayerCastVote.type,(payload)=>{
-                this.gameController.setGameWithRoomcode(this.gameController.updatePlayerVote(this.gameController.getGameFromRoomcode(payload.roomCode),payload.selfId,payload.missionPass));
+
+                let game = this.gameController.getGameFromRoomcode(payload.roomCode);
+                this.gameController.setGameWithRoomcode(payload.roomCode,this.gameController.updatePlayerVote(game,payload.selfId,payload.missionPass));
                 communicatePlayerCantVote(io,payload.selfId);
                 let allPlayersVoted = this.gameController.checkAllPlayersVoted(payload.roomCode);
                 if(allPlayersVoted){
                     this.gameController.transitionRound(payload.roomCode);
-                    let [gameOver,knightsWonGame] = this.gameController.checkGameOver(this.gameController.getGameFromRoomcode(payload.roomCode));
-                    if(!gameOver){
+                    let [gameOverFlag,knightsWonGame] = this.gameController.checkGameOver(game);
+                    if(!gameOverFlag){
                     } else {
-                        console.log('Game over')
+                        game.gameOver=true; 
+                        this.gameController.setGameWithRoomcode(payload.roomCode,game);
+                        this.io.in(payload.roomCode).emit(gameOver.type,knightsWonGame);
                     }
                 }
             })
