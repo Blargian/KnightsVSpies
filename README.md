@@ -7,6 +7,8 @@ A turn based multiplayer game the whole family can play:
 ## About the project  
 Knights & Spies is an open-source multiplayer online game inspired by the social role-playing card based game [the resistance](https://en.wikipedia.org/wiki/The_Resistance_(game)). In the game players take the role of either a knight or a spy and play successive rounds in which they go on "missions". The aim of the game is for knights to win by trying to figure out who the spies in their midst are and by passing the missions, while the spies will try to sneakily conceal their identities while trying to fail as many missions as possible. The purpose of this offering is to create a simple, user friendly and fun online game for friends and family to connect online from a distance. 
 
+## Setup 
+Please see the [setup guidelines](/documentation/setup-guide.md) for a detailed guideline of how to install and run the project locally. 
 ## Technologies
 
 The project employs the following technologies
