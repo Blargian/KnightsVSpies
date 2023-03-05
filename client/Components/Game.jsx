@@ -99,7 +99,7 @@ const Game = (props) => {
             }
             {
                 props.gameOver ? 
-                <GameOver knightsWon={props.knightsWonGame}/> : null
+                <GameOver/> : null
             }
         </div>
     )

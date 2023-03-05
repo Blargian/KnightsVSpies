@@ -1,17 +1,23 @@
 import React from 'react';
 import knightsWinImage from '/assets/knights_won.png';
 import spiesWinImage from '/assets/spies_won.png';
+import {connect} from 'react-redux'
 
-const GameOver = ({knightsWon}) => {
+const GameOver = ({knightsWonGame}) => {
 
-    const winnerClass = "text-center p-5 mx-auto"
     return (
-        <div className="text-center animate-fadein">
-            <h1 className="text-white text-3xl">GAME OVER</h1>
-            {knightsWon!==null ? <h1 className="text-white text-3xl">{knightsWon? "Knights" : "Spies"} won the game</h1> : null}
-            {knightsWon===true ? <img className={winnerClass} src={knightsWinImage}/> : (knightsWon!==true && knightsWon===false) ? <img className={winnerClass} src={spiesWinImage}/> : <h1 className="text-white text-3xl">GAME OVER</h1>}
+        <div className="text-center">
+            <h1 className="text-white text-3xl animate-fadein">GAME OVER</h1>
+            <h1 className="text-white text-3xl animate-fadein delay-1000">{knightsWonGame ? "KNIGHTS" : "SPIES"} WON </h1>
         </div>
     )
 }
 
-export default GameOver;
+const mapStateToProps = (state,ownProps) => {
+    const knightsWonGame = state.game.knightsWonGame
+    return {
+        knightsWonGame
+    }
+}
+
+export default connect(mapStateToProps,null)(GameOver);

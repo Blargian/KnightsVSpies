@@ -81,13 +81,15 @@ export default class MainController {
                 communicatePlayerCantVote(io,payload.selfId);
                 let allPlayersVoted = this.gameController.checkAllPlayersVoted(payload.roomCode);
                 if(allPlayersVoted){
-                    this.gameController.transitionRound(payload.roomCode);
                     let [gameOverFlag,knightsWonGame] = this.gameController.checkGameOver(game);
                     if(!gameOverFlag){
+                        this.gameController.transitionRound(payload.roomCode);
                     } else {
                         game.gameOver=true; 
+                        game.KnightsWonGame=knightsWonGame; 
                         this.gameController.setGameWithRoomcode(payload.roomCode,game);
-                        this.io.in(payload.roomCode).emit(gameOver.type,knightsWonGame);
+                        console.log(this.gameController.getGameFromRoomcode(payload.roomCode))
+                        this.io.in(payload.roomCode).emit(gameOver.type,{knightsWonGame});
                     }
                 }
             })

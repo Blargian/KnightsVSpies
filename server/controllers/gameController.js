@@ -159,7 +159,6 @@ export default class GameController {
         } 
         this.incrementLeader(game);
         //send something back to the front-end to show the winner 
-        console.log(game.gameOver)
         if(!game.gameOver){
             this.io.in(roomCode).emit(showWinner.type,knightsWon);
             setTimeout(()=>{
