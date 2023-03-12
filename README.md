@@ -1,8 +1,12 @@
 # Knights & Spies
 
-<img src="https://github.com/Blargian/spyspy/blob/master/documentation/UI/assets/spy.png">
-
+<p align="center">
+  <img src="https://github.com/Blargian/spyspy/blob/master/documentation/UI/assets/spy.png">
+</p>
+<h2 align="center">
 A turn based multiplayer game the whole family can play:
+</h2>
+
 
 ## About the project  
 Knights & Spies is an open-source multiplayer online game inspired by the social role-playing card based game [the resistance](https://en.wikipedia.org/wiki/The_Resistance_(game)). In the game players take the role of either a knight or a spy and play successive rounds in which they go on "missions". The aim of the game is for knights to win by trying to figure out who the spies in their midst are and by passing the missions, while the spies will try to sneakily conceal their identities while trying to fail as many missions as possible. The purpose of this offering is to create a simple, user friendly and fun online game for friends and family to connect online from a distance. 
